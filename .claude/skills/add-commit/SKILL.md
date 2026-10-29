@@ -1,14 +1,15 @@
 ---
 name: add-commit
 description: 'Prepares and creates git commits in Conventional Commits format with an area scope, after the user approves the message. Use when the user says "commit", "add commit", "закоміть", "зроби коміт", "закомітити", asks to commit changes, or runs /add-commit. Not for questions about existing commits or history.'
-allowed-tools: Read, Grep, Glob, Write, Bash(git status*), Bash(git diff*), Bash(git log*), Bash(git branch --show-current), Bash(git symbolic-ref *), Bash(git rev-parse *), Bash(git add *), Bash(git commit -F *), Bash(wc -c *)
+allowed-tools: Read, Grep, Glob, Bash(git status*), Bash(git diff*), Bash(git log*), Bash(git branch --show-current), Bash(git symbolic-ref *), Bash(git rev-parse *), Bash(git add *), Bash(git commit -F *), Bash(wc -c *)
 ---
 # Add commit
 
 ## Rules
 
 - Nothing is committed before approval; never push, amend, rebase or use `--no-verify`.
-- Approval is a clear yes with no requested changes («так», «yes», «ок», «давай», «👍» and the like). Anything that asks for a change, adds a condition or is unclear is not approval: revise and show again, or ask.
+- Approval is a clear yes with no requested changes («так», «yes», «ок», «давай», «👍» and the like). Anything that asks for a change, adds a condition or is unclear is not approval: revise and show again, or ask. A yes with a change («так, але зміни subject на …») is a change request: apply it, show the commit again in its final form and wait for a new yes. Never commit text the user has not seen as it will be committed.
+- One approval covers one commit. With several commits, show and approve them one at a time; never ask to approve several at once.
 - Talk in the user's language; commit messages in English only.
 - Never add trailers (`Co-Authored-By`, `Generated with`, etc.) or any mention of AI or Claude Code.
 - Never guess: ask when the type, scope or purpose of a change is unclear.
@@ -103,18 +104,25 @@ issue body.
 For one approved commit:
 
 1. `git add -- <files>` with exactly the approved paths. `<files>` includes deleted paths (stages the deletion) and both the old and new path of every rename.
-2. Message file: `git rev-parse --absolute-git-dir`, then `<git dir>/add-commit-msg.txt`. Inside `.git` it can never be committed, and the absolute path works from any subfolder; it is reused and never deleted. The Write tool refuses to overwrite a file not read in this session, so first Read it; a "file does not exist" error is fine. Then Write the message. No trailing blank lines.
-3. `git commit -F '<message file>' -- <files>` with the same paths. Only these files are committed; other staged files stay staged.
-4. Verify; mismatch → stop and report, never amend:
+2. Commit with the same paths, the message on stdin through a quoted heredoc:
+
+   ```bash
+   git commit -F - -- <files> <<'ADD_COMMIT_EOF'
+   <message exactly as approved>
+   ADD_COMMIT_EOF
+   ```
+
+   Only these files are committed; other staged files stay staged. The quotes around the delimiter make the shell pass the message as is: no `$(…)`, backticks or `$VAR` are expanded. The delimiter must not appear as a whole line in the message; if it does, use another one (e.g. add a digit). No trailing blank lines. Never write the message to a file: Claude Code asks for permission to write into `.git/` and `.claude/`, and a file anywhere else in the repo shows up as untracked.
+3. Verify; mismatch → stop and report, never amend:
    - Message: `git log -1 --format=%B`. Compare with the approved message after trimming trailing spaces on each line and trailing blank lines (git normalizes whitespace on commit). Text added that the user did not approve → see Hooks (`commit-msg`).
    - Files: `git log -1 --name-status --format=`. The set of paths must equal the approved list. Treat `R old new` and `D old` + `A new` as the same change: git reports a rename only when the files are at least 50% similar.
-5. `git status --porcelain -- <files>`: an approved file is modified or still staged → a hook changed it (see Hooks).
+4. `git status --porcelain -- <files>`: an approved file is modified or still staged → a hook changed it (see Hooks).
 
 Report: hash, subject, files per commit, commits not done (if stopped), skipped files, and `git status --porcelain` at the end.
 
 ## Hooks
 
-Formatters (prettier, lint-staged, etc.) may change files during the commit. With `git commit -- <paths>` git uses a temporary index, so hooks that run `git add` themselves may leave their fixes out of the commit or staged afterwards; step 5 of Committing catches both cases.
+Formatters (prettier, lint-staged, etc.) may change files during the commit. With `git commit -- <paths>` git uses a temporary index, so hooks that run `git add` themselves may leave their fixes out of the commit or staged afterwards; step 4 of Committing catches both cases.
 
 - Commit failed and approved files changed → show `git diff -- <files>`, ask; on yes, `git add -- <files>` and repeat the same commit command once.
 - Commit succeeded but approved files changed afterwards → show the diff and propose a follow-up commit (`style(<scope>): apply formatter`); never amend.
@@ -123,6 +131,6 @@ Formatters (prettier, lint-staged, etc.) may change files during the commit. Wit
 
 ## Failures
 
-- `git commit` fails for a non-hook reason → report the error and the message file path.
+- `git commit` fails for a non-hook reason → report the error and show the approved message, so the user can commit by hand.
 - `git commit` hangs or fails on signing (`commit.gpgsign`, passphrase prompt) → stop and tell the user to unlock the key or sign by hand; never disable signing.
 - The same commit is retried at most once.
