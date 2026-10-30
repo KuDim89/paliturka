@@ -1,6 +1,6 @@
 ---
 name: create-issue
-description: 'Plans and creates exactly one GitHub issue with an SI-N key, labels and a branch name. Use when the user says "create issue", asks to create or draft an issue or ticket, or runs /create-issue.'
+description: 'Plans and creates exactly one GitHub issue with a PL-N key, labels and a branch name. Use when the user says "create issue", asks to create or draft an issue or ticket, or runs /create-issue.'
 allowed-tools: Read, Grep, Glob, Bash(gh auth status*), Bash(gh repo view *), Bash(gh issue list *), Bash(gh issue view *), Bash(gh issue create *), Bash(gh issue edit *), Bash(gh label list *), Bash(gh label create *), Bash(gh label edit *)
 ---
 # Create issue
@@ -20,7 +20,7 @@ allowed-tools: Read, Grep, Glob, Bash(gh auth status*), Bash(gh repo view *), Ba
 3. Read `gh issue list --state open --limit 100`, `gh label list --limit 100 --json name,description`, relevant code. For each label of this issue, compare its description with the Labels table word for word; a different one goes into the plan as a `gh label edit --description` change (see Labels).
 4. Similar open issue → show it, ask: create new / cancel. Else: "no similar issue among N open issues checked".
 5. Ask until type, areas, scope, tasks and acceptance criteria are clear, and whether to assign the issue to the user (default: no). Several issues → propose a split, create one.
-6. Plan: repo, title, labels, assignee (`@me` or none), branch, full body with `SI-N` placeholders, label changes.
+6. Plan: repo, title, labels, assignee (`@me` or none), branch, full body with `PL-N` placeholders, label changes.
 7. `ExitPlanMode`; on rejection, revise.
 8. Pre-publish check, publish, verify, report (see Publishing).
 
@@ -40,8 +40,8 @@ One type, zero or more areas (a new area is proposed in the plan with a descript
 
 ## Key, title, branch
 
-- Key `SI-N` = issue number (`#2` → `SI-2`); gaps from PRs are normal.
-- Title `[SI-N] Short imperative title`; branch `<prefix>SI-N-<slug>`.
+- Key `PL-N` = issue number (`#2` → `PL-2`); gaps from PRs are normal.
+- Title `[PL-N] Short imperative title`; branch `<prefix>PL-N-<slug>`.
 - Slug: 2–4 lowercase words joined by `-`, only `a-z0-9`.
 
   - Title has at most 4 words without filler words (`a, an, the, for, to, of, in, on, and, with`) → use those words.
@@ -61,11 +61,11 @@ One type, zero or more areas (a new area is proposed in the plan with a descript
 ```markdown
 | Field | Value |
 |---|---|
-| Key | SI-N |
+| Key | PL-N |
 | Type | feature |
 | Area | frontend |
 | Labels | `feature`, `frontend` |
-| Branch | `feature/SI-N-create-nav-menu` |
+| Branch | `feature/PL-N-create-nav-menu` |
 
 ## Description
 What is needed and why. For a bug: **Current behavior** and **Expected behavior**.
@@ -104,18 +104,18 @@ The title and label names go into the command in **single quotes**, each `'` ins
 
    - the template: first line `| Field | Value |`, all fields, all four sections in order;
    - Type, Area and Labels rows matching the label table and each other;
-   - `SI-N` in Key and Branch; slug matching the slug rules;
+   - `PL-N` in Key and Branch; slug matching the slug rules;
    - at least one task and one acceptance criterion, each criterion verifiable;
    - English only.
 
    Errors:
 
-   - **Mechanical** (template, section order, fields, label rows, `SI-N`, slug): fix without asking to match the approved plan, mention in the report, rerun the check. Never change approved content.
+   - **Mechanical** (template, section order, fields, label rows, `PL-N`, slug): fix without asking to match the approved plan, mention in the report, rerun the check. Never change approved content.
    - **Content** (vague or missing criteria, missing tasks, non-English text): report, publish nothing, ask: fix or publish as is. "Fix" → fix, rerun the check. "Publish as is" → continue.
 2. Apply the approved label changes.
 3. `gh issue create --title '<title without key>' --label '<a>' --label '<b>'`, plus `--assignee @me` if approved, plus `--body-file -` with the checked body in a heredoc. One `--label` flag per label; never join them with commas. Run it once only.
-4. Take `N` from the printed URL; replace every `SI-N` in the body with `SI-<N>`; `gh issue edit <N> --title '[SI-<N>] <title>' --body-file -` with that body in a heredoc.
-5. `gh issue view <N> --json title,labels,assignees,body,state`: title, labels, assignee and body match the plan; no `SI-N` left. Mismatch → repeat step 4, check again.
+4. Take `N` from the printed URL; replace every `PL-N` in the body with `PL-<N>`; `gh issue edit <N> --title '[PL-<N>] <title>' --body-file -` with that body in a heredoc.
+5. `gh issue view <N> --json title,labels,assignees,body,state`: title, labels, assignee and body match the plan; no `PL-N` left. Mismatch → repeat step 4, check again.
 6. Report URL, key, labels, branch and the check result.
 
 ## Failures

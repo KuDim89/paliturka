@@ -21,14 +21,14 @@ REPO_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 TITLE_RE = re.compile(
     r"^(?P<type>[a-z]+)(?:\((?P<scope>[^()\s]+)\))?(?P<bang>!)?: (?P<desc>.+)$"
 )
-ISSUE_KEY_RE = re.compile(r"^\[(SI-\d+)\]\s*", re.IGNORECASE)
+ISSUE_KEY_RE = re.compile(r"^\[(PL-\d+)\]\s*", re.IGNORECASE)
 MERGE_PR_RE = re.compile(r"^Merge pull request #(\d+)\b")
 SQUASH_PR_RE = re.compile(r"\(#(\d+)\)$")
 KEYWORD = r"(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)"
 CLOSING_RES = [
     re.compile(r"\b" + KEYWORD + r":?\s+#(\d+)\b", re.IGNORECASE),
-    re.compile(r"\b" + KEYWORD + r":?\s+SI-\d+\s+\(#(\d+)\)", re.IGNORECASE),
-    re.compile(r"\bpart\s+of\s+SI-\d+\s+\(#(\d+)\)", re.IGNORECASE),
+    re.compile(r"\b" + KEYWORD + r":?\s+PL-\d+\s+\(#(\d+)\)", re.IGNORECASE),
+    re.compile(r"\bpart\s+of\s+PL-\d+\s+\(#(\d+)\)", re.IGNORECASE),
 ]
 MENTION_RE = re.compile(r"(?<![\w&/])#(\d+)\b")
 BREAKING_FOOTER_RE = re.compile(r"^BREAKING[ -]CHANGE:", re.MULTILINE)

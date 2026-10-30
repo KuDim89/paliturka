@@ -85,7 +85,7 @@ allowed-tools: Read, Grep, Glob, Bash(git status*), Bash(git diff*), Bash(git lo
 - Subject: imperative, lowercase, no trailing period, at most 72 characters.
 - Body: what and why, not how; every line at most 72 characters. Explain non-obvious changes (e.g. why a `.gitignore` line exists). Trivial change → body may be omitted.
 - Breaking change → `!` before the colon (`feat(backend)!: ...`) and a body paragraph on what breaks and how to migrate. No `BREAKING CHANGE:` footer.
-- Branch name contains `SI-<N>`, matched case-insensitively (from create-issue, e.g. `feature/SI-12-add-login` or `fix/si-12-login`) → last body line `Part of SI-12.`, always upper case (plain text, not a trailer). No key in the branch → no line; never invent one.
+- Branch name contains `PL-<N>`, matched case-insensitively (from create-issue, e.g. `feature/PL-12-add-login` or `fix/pl-12-login`) → last body line `Part of PL-12.`, always upper case (plain text, not a trailer). No key in the branch → no line; never invent one.
 
 Example:
 
@@ -93,7 +93,7 @@ Example:
 feat(tooling): add create-issue skill
 
 Add a project skill that plans and creates one GitHub issue
-with an SI-N key, labels and a branch name.
+with a PL-N key, labels and a branch name.
 
 Ignore .claude/tmp/, where the skill writes the temporary
 issue body.

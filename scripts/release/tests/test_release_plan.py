@@ -224,10 +224,10 @@ class RenderTests(unittest.TestCase):
 
     def test_line_formats(self):
         notes = notes_section(plan(load("mixed"))["body"])
-        self.assertIn("- **backend:** add OAuth login for the API (SI-12, #7)", notes)
-        self.assertIn("- **backend:** fix login redirect (SI-15, #8)", notes)
-        result = plan(fixture([("feat: [si-3] plain", ""), ("fix: no issue", "")]))
-        self.assertIn("- plain (SI-3, #1)", result["body"])
+        self.assertIn("- **backend:** add OAuth login for the API (PL-12, #7)", notes)
+        self.assertIn("- **backend:** fix login redirect (PL-15, #8)", notes)
+        result = plan(fixture([("feat: [pl-3] plain", ""), ("fix: no issue", "")]))
+        self.assertIn("- plain (PL-3, #1)", result["body"])
         self.assertIn("- no issue (#2)", result["body"])
 
     def test_sections_order_and_empty_omitted(self):
@@ -235,7 +235,7 @@ class RenderTests(unittest.TestCase):
         self.assertLess(notes.index("### Features"), notes.index("### Fixes"))
         self.assertLess(notes.index("### Fixes"), notes.index("### Other"))
         self.assertNotIn("### Breaking changes", notes)
-        self.assertIn("### Fixes\n- **backend:** fix login redirect (SI-15, #8)\n\n### Other",
+        self.assertIn("### Fixes\n- **backend:** fix login redirect (PL-15, #8)\n\n### Other",
                       notes)
 
     def test_markers_in_titles_are_neutralised(self):
@@ -244,7 +244,7 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(body.count(rp.NOTES_START), 1)
 
     def test_unicode_round_trip_through_cli(self):
-        data = fixture([("feat(ui): додати кнопку 🚀", "Part of SI-4 (#4)")],
+        data = fixture([("feat(ui): додати кнопку 🚀", "Part of PL-4 (#4)")],
                        issues={"4": {"state": "OPEN"}})
         with tempfile.TemporaryDirectory() as tmp:
             out = io.StringIO()
