@@ -53,7 +53,7 @@ Approval is any clear yes that asks for no changes: «так», «yes», «ок�
 The plan is the user's only chance to catch a mistake before it is public, so show everything that will end up on GitHub, in English, in this order:
 
 - Repo and `<remote branch>` → `development`, plus "N commits behind development" when that applies.
-- Issue: `SI-N (#N)` and how it was found, or "no issue".
+- Issue: `PL-N (#N)` and how it was found, or "no issue".
 - Scope of the change: number of commits and the changed files from `git diff --stat` (up to 10 paths; more → the first 10 and "and N more"). This lets the user spot files that do not belong in the PR.
 - C > 1 → "Squash: C commits → 1, then force-push `<remote branch>` (`--force-with-lease`)" and the full squash commit message in a text block. The user approves it with the plan.
 - Title. With a scope, say where it came from: "issue label", "from the labels table" or "skipped: <reason>". When shortened, show the original issue title too.
@@ -65,36 +65,36 @@ The plan is the user's only chance to catch a mistake before it is public, so sh
 
 ## Branch and issue
 
-The issue number is `SI-<N>` anywhere in the branch name, matched case-insensitively: `feature/SI-12-oauth`, `fix/si-12-login` and `SI-12` all give issue 12. Always write it as `SI-12` (upper case) in the title and description.
+The issue number is `PL-<N>` anywhere in the branch name, matched case-insensitively: `feature/PL-12-oauth`, `fix/pl-12-login` and `PL-12` all give issue 12. Always write it as `PL-12` (upper case) in the title and description.
 
 - Match → `gh issue view <N> --json number,title,body,labels,state,url`.
   - Not found → stop and report.
   - The number belongs to a pull request, not an issue (`gh` says so, or `url` contains `/pull/`) → stop and report: the branch points to PR #N, not an issue.
   - Closed → warn, ask: continue / cancel.
-- No match, but the branch has something that looks like a broken issue reference (`SI12`, `SI_12`, `si12-…`, `SI-` without a number) → say what you found and ask: use issue N / continue without an issue / cancel. A typo in the branch name should not silently drop the issue link and labels.
+- No match, but the branch has something that looks like a broken issue reference (`PL12`, `PL_12`, `pl12-…`, `PL-` without a number) → say what you found and ask: use issue N / continue without an issue / cancel. A typo in the branch name should not silently drop the issue link and labels.
 - Nothing like an issue reference → no issue; say so in the plan.
 
 ## Title
 
-`type(scope): [SI-N] description`; without an issue: `type(scope): description`.
+`type(scope): [PL-N] description`; without an issue: `type(scope): description`.
 
 - Type from the issue type label: `bug` → `fix`, `feature` → `feat`, `documentation` → `docs`.
   - `enhancement`, no type label, or no issue → choose from the commits (`feat`, `fix`, `refactor`, `perf`, `test`, `ci`, `build`, `chore`); unclear → ask.
   - Several type labels that map to different types (e.g. `bug` and `feature`) → ask which one; do not pick silently.
 - Scope = the issue's area label. Several areas or no issue → the area that fits the change, from the Labels table in `.claude/skills/create-issue/SKILL.md`; none fits → no scope.
   - That file is missing or has no Labels table → no scope, and say in the plan that the scope was skipped for this reason. Do not guess area names: a scope that is not a real area label breaks filtering and changelogs.
-- Description: the issue title without `[SI-N]`; without an issue, a short imperative summary of the commits. No trailing period. Start with a lowercase letter, unless the first word is an acronym or a proper name, which keeps its normal spelling (`API`, `OAuth`, `GitHub`, `README`).
+- Description: the issue title without `[PL-N]`; without an issue, a short imperative summary of the commits. No trailing period. Start with a lowercase letter, unless the first word is an acronym or a proper name, which keeps its normal spelling (`API`, `OAuth`, `GitHub`, `README`).
 - Breaking change → `!` before `:` in the PR title (`feat(api)!: …`). A commit is breaking if its subject has `!` before `:` or its body has a `BREAKING CHANGE:` or `BREAKING-CHANGE:` footer. When breaking, also add a `## Breaking changes` section to the description (see Description).
 
 ### Length
 
 The whole title is at most 72 characters, because GitHub and most git tools truncate longer subjects. When it does not fit:
 
-- Shorten only the description part; keep type, scope, `!` and `[SI-N]` intact.
+- Shorten only the description part; keep type, scope, `!` and `[PL-N]` intact.
 - Keep the meaning: drop filler words and articles first, then use shorter synonyms. Never cut mid-word or end with "…".
 - In the plan, show the original issue title next to the shortened one so the user can adjust it.
 
-Examples: `feat(backend): [SI-12] add OAuth login for the API`, `docs: update README`, `feat(api)!: [SI-30] drop v1 endpoints`.
+Examples: `feat(backend): [PL-12] add OAuth login for the API`, `docs: update README`, `feat(api)!: [PL-30] drop v1 endpoints`.
 
 ## Description
 
@@ -112,7 +112,7 @@ Why the change is needed: from the issue Description, or from commits.
 ## Breaking changes
 - What breaks and what users of it must change (only when breaking)
 
-Part of SI-N (#N).
+Part of PL-N (#N).
 ```
 
 - `## Breaking changes` only when the PR is breaking; take the content from the `BREAKING CHANGE` footers and the diff.
@@ -132,15 +132,15 @@ Only when C > 1. The PR description is still built from all original commits (Wo
 
 Message: the rules of the Message section in `.claude/skills/add-commit/SKILL.md`, with:
 
-- Subject = the PR title without `[SI-N] ` (`feat(backend): add OAuth login for the API`); `!` if any commit is breaking, plus a body paragraph on what breaks and how to migrate.
+- Subject = the PR title without `[PL-N] ` (`feat(backend): add OAuth login for the API`); `!` if any commit is breaking, plus a body paragraph on what breaks and how to migrate.
 - Body: what and why across all commits, not a list of commit subjects; every line at most 72 characters.
-- Last line `Part of SI-N.` only with an issue.
+- Last line `Part of PL-N.` only with an issue.
 
 ## Shell quoting
 
 Titles, labels and branch names can contain `"`, `$`, backticks, spaces and commas. Inside double quotes the shell would run `$(…)` and backticks, so a crafted issue title could execute a command.
 
-- Wrap every such value in **single quotes**, and write each `'` inside it as `'\''`. Example: the title `fix: [SI-7] don't crash` → `--title 'fix: [SI-7] don'\''t crash'`.
+- Wrap every such value in **single quotes**, and write each `'` inside it as `'\''`. Example: the title `fix: [PL-7] don't crash` → `--title 'fix: [PL-7] don'\''t crash'`.
 - One `--label '<name>'` flag per label; never join labels with commas (a label can contain a comma).
 - If a value contains a newline or a control character, stop and show it to the user instead of passing it to the shell.
 - Multi-line text (the PR description, the squash message) goes through stdin with a quoted heredoc, never through a file or a quoted argument:
