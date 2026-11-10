@@ -167,6 +167,7 @@ Use the skills; they hold the full rules:
 | Task                                        | Skill          |
 | ------------------------------------------- | -------------- |
 | Create a GitHub issue                       | `create-issue` |
+| Work on an issue (plan, build, test)        | `do-issue`     |
 | Commit changes                              | `add-commit`   |
 | Rebase a branch onto `development`          | `sync-branch`  |
 | Open a PR into `development`                | `create-pr`    |
