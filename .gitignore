@@ -1,2 +1,21 @@
 .claude/tmp/
 __pycache__/
+
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Local environment
+.env.local
+.env*.local
+
+# Local data (books and the SQLite database)
+storage/
+
+# Logs
+*.log
