@@ -4,7 +4,7 @@ A personal cloud hub for books. Users upload their books once, so the files no l
 
 **Goal:** a learning project plus personal use. No monetization is planned.
 
-**Status:** pre-code. The repo holds only workflow tooling; there is no app code yet. Web comes first (responsive); a mobile app is a future plan.
+**Status:** stage 1 (Skeleton) in progress. The base Next.js app is set up and shows a placeholder home page; the rest of the stack is not added yet. Web comes first (responsive); a mobile app is a future plan.
 
 **Current stage:** local development only. The frontend and backend run on the developer's computer, with no servers or external accounts. Deployment comes later, when the user decides.
 
@@ -55,7 +55,7 @@ Formats we want to support in the future: PDF, FB2, MOBI/AZW3/AZW, DJVU, TXT, DO
 
 ## Stack
 
-Chosen, but nothing is installed or tested yet:
+Chosen. Next.js, TypeScript and pnpm are installed; the rest is not installed or tested yet:
 
 | Area         | Choice                                                                        |
 | ------------ | ----------------------------------------------------------------------------- |
@@ -153,7 +153,13 @@ Before a task counts as done and a PR is opened:
 .claude/rules/       Rules that load for matching paths
 .claude/skills/      Workflow skills (see Git workflow)
 .github/workflows/   Release workflow
+app/                 Next.js routes; each route only re-exports a page
+pages/               Empty; stops Next.js from reading src/pages as routes
+src/                 FSD layers: pages, entities, shared
 scripts/release/     Release plan script and its tests
+package.json         Scripts, dependencies, Node.js and pnpm versions
+pnpm-workspace.yaml  pnpm settings (engineStrict)
+.nvmrc               Exact Node.js version
 ```
 
 ## Git workflow
@@ -175,6 +181,16 @@ Use the skills; they hold the full rules:
 | Prepare a release (`development` → `main`)  | `release-pr`   |
 
 ## Commands
+
+Requirements: Node.js 26 (the exact version is in `.nvmrc`; `nvm use` switches to it) and pnpm 12 (the exact version is in `packageManager`), installed with `npm install -g pnpm@12.18.0`. An older pnpm fails with `packages field missing or empty`, because it does not read a `pnpm-workspace.yaml` that holds only settings. `pnpm install` fails on a Node.js version outside `>=26 <27`.
+
+Install dependencies, run the app at `http://localhost:3000`, and build it:
+
+```bash
+pnpm install
+pnpm dev
+pnpm build
+```
 
 Run the release script tests:
 
