@@ -3,6 +3,7 @@ name: ship-pr
 description: 'Ships a finished feature branch end to end: checks that the branch has changes, then runs add-commit, sync-branch, pushes the branch and runs create-pr, asking for approval before every step. Stops when the branch is empty or any step stops. Use when the user says "ship", "ship pr", "ship it", "доставь код", "відправ гілку", "зроби все до PR", or runs /ship-pr. Not for release PRs (that is release-pr).'
 allowed-tools: Skill, Bash(git branch --show-current), Bash(git status*), Bash(git fetch origin*), Bash(git rev-parse *), Bash(git rev-list *), Bash(git log *), Bash(git config branch.*), Bash(git push -u origin *), Bash(git push --force-with-lease=*)
 ---
+
 # Ship PR
 
 Runs four steps in order: **1 Commit** (add-commit), **2 Sync** (sync-branch), **3 Push**, **4 PR** (create-pr). The sub-skills are invoked with the Skill tool; their rules apply while they run. This skill does not repeat their logic.

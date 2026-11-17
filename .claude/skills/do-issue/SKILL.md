@@ -2,6 +2,7 @@
 name: do-issue
 description: 'Works on one GitHub issue end to end: reads it, agrees a step-by-step plan, creates or switches to the issue branch, implements with tests, verifies against the acceptance criteria and loops plan → fix → retest (max 3 cycles); then ticks the verified checkboxes and reports. Use when the user says "do issue", "do-issue PL-N", "work on issue", "візьми ішью", "виконай ішью", "зроби ішью", or runs /do-issue. Not for creating issues (create-issue) or commits and PRs (add-commit, ship-pr).'
 ---
+
 # Do issue
 
 Detailed procedures live in `references/`. A step that names a reference file: read it before doing that step, on every run; never work from memory of it. The reference wins over a summary line here.
@@ -48,6 +49,7 @@ Every plan (the first one, deviation re-plans, fix plans) goes through the same 
    - Other Definition of done items that apply: `CLAUDE.md` Commands or Status updates, new screens checked in both languages and themes, a decided open decision moved to its section.
 
    Approve through the plan gate.
+
 6. **Branch** → read `references/branch-and-resume.md`, section "Switching".
 7. **Implement** step by step, writing the planned tests together with the code they cover. Track progress with tasks. Any doubt about deviating from the plan → read `references/deviations.md`.
 8. **Verify** → read `references/verification.md`; read `references/dev-server.md` before running the app.

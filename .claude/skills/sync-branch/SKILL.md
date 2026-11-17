@@ -3,6 +3,7 @@ name: sync-branch
 description: 'Brings the current feature branch up to date with development: fetches origin, fast-forwards local development and rebases the branch onto origin/development after the user approves. Checks for conflicts first and leaves the branch untouched when there are any. Never pushes. Use when the user says "sync branch", "update branch", "rebase on development", "онови гілку", "підтягни development", "синхронізуй гілку", or runs /sync-branch. Not for resolving conflicts or for main.'
 allowed-tools: Bash(git branch --show-current), Bash(git status*), Bash(git fetch origin*), Bash(git rev-parse *), Bash(git config branch.*), Bash(git rev-list *), Bash(git log *), Bash(git diff *), Bash(git merge-tree *), Bash(git rebase --no-update-refs --no-rebase-merges origin/development), Bash(git rebase --abort)
 ---
+
 # Sync branch
 
 ## Rules
@@ -57,6 +58,7 @@ allowed-tools: Bash(git branch --show-current), Bash(git status*), Bash(git fetc
    - `git rev-list --count origin/development..HEAD` = C. Less → git dropped commits: ones whose changes are already in `development`, and merge commits. Report which (`git log --oneline origin/development..<old head>` against the new list). This is normal, not a failure.
    - `git status --porcelain --untracked-files=no` is empty.
    - `git rev-parse HEAD` → `<new head>`.
+
    Mismatch → stop and report, with `<old head>` and the recovery command `git reset --hard <old head>`. Never run it without asking.
 
 ## Report

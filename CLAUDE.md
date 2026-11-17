@@ -57,19 +57,19 @@ Formats we want to support in the future: PDF, FB2, MOBI/AZW3/AZW, DJVU, TXT, DO
 
 Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier and Steiger are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint:
 
-| Area         | Choice                                                                        |
-| ------------ | ----------------------------------------------------------------------------- |
-| Framework    | Next.js with TypeScript                                                       |
-| Database     | SQLite file, through Prisma                                                   |
-| File storage | Local folder                                                                  |
-| Auth         | Better Auth                                                                   |
-| Email        | Printed to the console (verification and password reset links)                |
-| Validation   | Zod                                                                           |
-| i18n         | next-intl                                                                     |
-| Styling      | Tailwind CSS and shadcn/ui                                                    |
-| EPUB reader  | epub.js                                                                       |
-| Tooling      | pnpm, ESLint, Prettier, Steiger, GitHub Actions (PR checks)                   |
-| Tests        | Vitest (unit), Playwright (e2e for sign-in, upload and reading)               |
+| Area         | Choice                                                          |
+| ------------ | --------------------------------------------------------------- |
+| Framework    | Next.js with TypeScript                                         |
+| Database     | SQLite file, through Prisma                                     |
+| File storage | Local folder                                                    |
+| Auth         | Better Auth                                                     |
+| Email        | Printed to the console (verification and password reset links)  |
+| Validation   | Zod                                                             |
+| i18n         | next-intl                                                       |
+| Styling      | Tailwind CSS and shadcn/ui                                      |
+| EPUB reader  | epub.js                                                         |
+| Tooling      | pnpm, ESLint, Prettier, Steiger, GitHub Actions (PR checks)     |
+| Tests        | Vitest (unit), Playwright (e2e for sign-in, upload and reading) |
 
 Local data lives in a `storage/` folder:
 
@@ -101,14 +101,14 @@ Preliminary choices for when the user decides to deploy. Do not set these up or 
 
 Within each stage, build and test the API first, then the frontend. The API uses route handlers in `app/api`, not Server Actions, so a future mobile app can reuse it. Screens follow the design (see Conventions).
 
-| Stage        | Backend                                                                       | Frontend                                     |
-| ------------ | ----------------------------------------------------------------------------- | -------------------------------------------- |
-| 1. Skeleton  | Next.js, FSD, Prisma with SQLite, storage module                              | i18n, themes and design tokens, ESLint, Prettier, Steiger, Vitest, Playwright, GitHub Actions (PR checks) |
-| 2. Sign-in   | Sign up, sign in, email verification, password reset, account deletion        | Landing, privacy policy and terms pages (draft text), sign-in, verification and account screens |
-| 3. Library   | Upload, EPUB validation, quotas, duplicates, covers, list, search, delete     | Library page, empty state                    |
-| 4. Reading   | Serving the file, progress and position, status, bookmarks, reader settings   | Book page, reader, bookmarks, reader settings |
-| 5. Annotations | Create, delete, change type, filter, annotation comments, book comments, Markdown export | Text selection, colors, list, annotation comments, book comments |
-| 6. Summaries | EPUB metadata, Open Library, Google Books                                     | Showing the summary                          |
+| Stage          | Backend                                                                                  | Frontend                                                                                                  |
+| -------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| 1. Skeleton    | Next.js, FSD, Prisma with SQLite, storage module                                         | i18n, themes and design tokens, ESLint, Prettier, Steiger, Vitest, Playwright, GitHub Actions (PR checks) |
+| 2. Sign-in     | Sign up, sign in, email verification, password reset, account deletion                   | Landing, privacy policy and terms pages (draft text), sign-in, verification and account screens           |
+| 3. Library     | Upload, EPUB validation, quotas, duplicates, covers, list, search, delete                | Library page, empty state                                                                                 |
+| 4. Reading     | Serving the file, progress and position, status, bookmarks, reader settings              | Book page, reader, bookmarks, reader settings                                                             |
+| 5. Annotations | Create, delete, change type, filter, annotation comments, book comments, Markdown export | Text selection, colors, list, annotation comments, book comments                                          |
+| 6. Summaries   | EPUB metadata, Open Library, Google Books                                                | Showing the summary                                                                                       |
 
 ## Open decisions
 

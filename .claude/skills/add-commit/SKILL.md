@@ -3,6 +3,7 @@ name: add-commit
 description: 'Prepares and creates git commits in Conventional Commits format with an area scope, after the user approves the message. Use when the user says "commit", "add commit", "закоміть", "зроби коміт", "закомітити", asks to commit changes, or runs /add-commit. Not for questions about existing commits or history.'
 allowed-tools: Read, Grep, Glob, Bash(git status*), Bash(git diff*), Bash(git log*), Bash(git branch --show-current), Bash(git symbolic-ref *), Bash(git rev-parse *), Bash(git add *), Bash(git commit -F *), Bash(wc -c *)
 ---
+
 # Add commit
 
 ## Rules
@@ -113,6 +114,7 @@ For one approved commit:
    ```
 
    Only these files are committed; other staged files stay staged. The quotes around the delimiter make the shell pass the message as is: no `$(…)`, backticks or `$VAR` are expanded. The delimiter must not appear as a whole line in the message; if it does, use another one (e.g. add a digit). No trailing blank lines. Never write the message to a file: Claude Code asks for permission to write into `.git/` and `.claude/`, and a file anywhere else in the repo shows up as untracked.
+
 3. Verify; mismatch → stop and report, never amend:
    - Message: `git log -1 --format=%B`. Compare with the approved message after trimming trailing spaces on each line and trailing blank lines (git normalizes whitespace on commit). Text added that the user did not approve → see Hooks (`commit-msg`).
    - Files: `git log -1 --name-status --format=`. The set of paths must equal the approved list. Treat `R old new` and `D old` + `A new` as the same change: git reports a rename only when the files are at least 50% similar.

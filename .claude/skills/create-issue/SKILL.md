@@ -3,6 +3,7 @@ name: create-issue
 description: 'Plans and creates exactly one GitHub issue with a PL-N key, labels and a branch name. Use when the user says "create issue", asks to create or draft an issue or ticket, or runs /create-issue.'
 allowed-tools: Read, Grep, Glob, Bash(gh auth status*), Bash(gh repo view *), Bash(gh issue list *), Bash(gh issue view *), Bash(gh issue create *), Bash(gh issue edit *), Bash(gh label list *), Bash(gh label create *), Bash(gh label edit *)
 ---
+
 # Create issue
 
 ## Rules
@@ -26,15 +27,15 @@ allowed-tools: Read, Grep, Glob, Bash(gh auth status*), Bash(gh repo view *), Ba
 
 ## Labels
 
-| Type        | Label             | Prefix           | Description                                | Color      |
-| ----------- | ----------------- | ---------------- | ------------------------------------------ | ---------- |
+| Type        | Label           | Prefix         | Description                                | Color    |
+| ----------- | --------------- | -------------- | ------------------------------------------ | -------- |
 | bug         | `bug`           | `fix/`         | Something isn't working                    | `d73a4a` |
 | feature     | `feature`       | `feature/`     | New functionality                          | `1d76db` |
 | enhancement | `enhancement`   | `enhancement/` | Improve existing functionality             | `a2eeef` |
 | docs        | `documentation` | `docs/`        | Improvements or additions to documentation | `0075ca` |
-| area        | `frontend`      | —               | Frontend code                              | `fbca04` |
-| area        | `backend`       | —               | Backend code                               | `5319e7` |
-| area        | `tooling`       | —               | Developer tooling, scripts and CI          | `c5def5` |
+| area        | `frontend`      | —              | Frontend code                              | `fbca04` |
+| area        | `backend`       | —              | Backend code                               | `5319e7` |
+| area        | `tooling`       | —              | Developer tooling, scripts and CI          | `c5def5` |
 
 One type, zero or more areas (a new area is proposed in the plan with a description and color). Only this issue's labels are checked: missing → `gh label create`, wrong description → `gh label edit --description`. Never touch other labels or colors; no `--force`. "Already exists" on create → treat as present.
 
@@ -47,8 +48,8 @@ One type, zero or more areas (a new area is proposed in the plan with a descript
   - Title has at most 4 words without filler words (`a, an, the, for, to, of, in, on, and, with`) → use those words.
   - Longer → summarize the main point: the action and its object, using words from the title where possible. Never truncate mid-phrase or end on a preposition.
 
-  | Title                                     | Slug                    |
-  | ----------------------------------------- | ----------------------- |
+  | Title                                     | Slug                  |
+  | ----------------------------------------- | --------------------- |
   | Add OAuth login for the API               | `add-oauth-login-api` |
   | Set up project from scratch               | `set-up-project`      |
   | Migrate match data from CSV to PostgreSQL | `migrate-match-data`  |
@@ -59,24 +60,28 @@ One type, zero or more areas (a new area is proposed in the plan with a descript
 ## Body template
 
 ```markdown
-| Field | Value |
-|---|---|
-| Key | PL-N |
-| Type | feature |
-| Area | frontend |
-| Labels | `feature`, `frontend` |
+| Field  | Value                          |
+| ------ | ------------------------------ |
+| Key    | PL-N                           |
+| Type   | feature                        |
+| Area   | frontend                       |
+| Labels | `feature`, `frontend`          |
 | Branch | `feature/PL-N-create-nav-menu` |
 
 ## Description
+
 What is needed and why. For a bug: **Current behavior** and **Expected behavior**.
 
 ## Tasks
+
 - [ ] Implementation step, each checkable on its own
 
 ## Acceptance criteria
+
 - [ ] Verifiable statement
 
 ## Technical notes
+
 - Affected files, approach, dependencies, risks, open questions
 ```
 
@@ -102,7 +107,7 @@ The title and label names go into the command in **single quotes**, each `'` ins
 
 1. Pre-publish check, before anything goes to GitHub. The issue (title, labels, body) must have:
 
-   - the template: first line `| Field | Value |`, all fields, all four sections in order;
+   - the template: the first line is the table header with the cells `Field` and `Value` (spaces that align the columns do not matter), all fields, all four sections in order;
    - Type, Area and Labels rows matching the label table and each other;
    - `PL-N` in Key and Branch; slug matching the slug rules;
    - at least one task and one acceptance criterion, each criterion verifiable;
@@ -112,6 +117,7 @@ The title and label names go into the command in **single quotes**, each `'` ins
 
    - **Mechanical** (template, section order, fields, label rows, `PL-N`, slug): fix without asking to match the approved plan, mention in the report, rerun the check. Never change approved content.
    - **Content** (vague or missing criteria, missing tasks, non-English text): report, publish nothing, ask: fix or publish as is. "Fix" → fix, rerun the check. "Publish as is" → continue.
+
 2. Apply the approved label changes.
 3. `gh issue create --title '<title without key>' --label '<a>' --label '<b>'`, plus `--assignee @me` if approved, plus `--body-file -` with the checked body in a heredoc. One `--label` flag per label; never join them with commas. Run it once only.
 4. Take `N` from the printed URL; replace every `PL-N` in the body with `PL-<N>`; `gh issue edit <N> --title '[PL-<N>] <title>' --body-file -` with that body in a heredoc.

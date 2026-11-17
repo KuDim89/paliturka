@@ -3,6 +3,7 @@ name: create-pr
 description: 'Creates one GitHub pull request from the current branch into development, with a Conventional Commits title, a What/Why/Changes description and the linked issue''s labels. Squashes the branch into one commit when it has several, and switches back to development afterwards. Use when the user says "create PR", "open pull request", "створи PR", "відкрий PR", "зроби пул реквест", or runs /create-pr. Not for release PRs (development → main).'
 allowed-tools: Read, Grep, Glob, Bash(git branch --show-current), Bash(git status*), Bash(git fetch origin*), Bash(git rev-parse *), Bash(git config branch.*), Bash(git rev-list *), Bash(git log *), Bash(git diff *), Bash(git merge-base *), Bash(git reset --soft *), Bash(git commit -F *), Bash(git push --force-with-lease*), Bash(git switch development), Bash(git pull --ff-only*), Bash(gh auth status*), Bash(gh repo view *), Bash(gh issue view *), Bash(gh pr list *), Bash(gh pr view *), Bash(gh pr create *), Bash(gh pr edit *)
 ---
+
 # Create PR
 
 ## Rules
@@ -100,16 +101,20 @@ Examples: `feat(backend): [PL-12] add OAuth login for the API`, `docs: update RE
 
 ```markdown
 ## What
+
 One sentence: what this PR does.
 
 ## Why
+
 Why the change is needed: from the issue Description, or from commits.
 
 ## Changes
+
 - Specific changes, grouped by topic
 - Mention deleted or renamed files
 
 ## Breaking changes
+
 - What breaks and what users of it must change (only when breaking)
 
 Part of PL-N (#N).
@@ -166,7 +171,9 @@ Titles, labels and branch names can contain `"`, `$`, backticks, spaces and comm
    - body → `--body-file -` with the approved description in a heredoc
    - labels → `--add-label '<name>'` for each approved label that is missing and `--remove-label '<name>'` for each label that is not in the plan. Never pass the whole list to a flag that replaces labels; add and remove exactly the difference so nothing else on the PR changes.
    - assignee missing → `--add-assignee @me`
+
    Then run `gh pr view` once more to confirm. (`isDraft` cannot be fixed with `gh pr edit`; if it differs, report it.)
+
 4. Switch back, only when the PR exists:
    1. `git switch development` (creates a local tracking branch from `origin/development` if missing). Fail → warning in the report; the PR is already created.
    2. `git pull --ff-only origin development` (explicit, so it works even when local `development` has no upstream). Fail → warning "local `development` has diverged from `origin/development`; not updated".
