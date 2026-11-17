@@ -55,7 +55,7 @@ Formats we want to support in the future: PDF, FB2, MOBI/AZW3/AZW, DJVU, TXT, DO
 
 ## Stack
 
-Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier and Steiger are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint:
+Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger and Vitest are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint:
 
 | Area         | Choice                                                          |
 | ------------ | --------------------------------------------------------------- |
@@ -133,6 +133,7 @@ When a decision is made, move it to the section it belongs to.
 - No hard-coded UI strings: all text goes through i18n, in both `en` and `uk`. Dates, numbers and plurals («8 книжок») are formatted with next-intl for the current locale, never by hand.
 - Colors come from the `--pl-*` theme tokens, which work in both themes.
 - Accessibility target is WCAG 2.2 AA: 4.5:1 text contrast, everything usable from the keyboard, visible focus, semantic elements, focus kept inside open dialogs.
+- Unit tests sit next to the code they test, inside the slice. The file name sets the environment: component tests are `*.test.tsx` and run in jsdom; logic and server tests are `*.test.ts` and run in Node, where globals such as streams and `fetch` are real. A `*.test.ts` file that needs the DOM starts with `// @vitest-environment jsdom`.
 - Modules: `package.json` sets `"type": "module"`, so every `.js` file is an ES module (`import`/`export`). A config that must use `require` (CommonJS) is named `.cjs`, for example a tool's config copied from older docs.
 - Environment variables: `.env.example` (no secrets) is committed, `.env.local` is ignored. Variables are read in one module and validated with Zod at startup.
 - Standard annotation types are defined once, as named constants with their colors and meanings. An annotation stores its type, not its color, so custom types can be added later without rework.
@@ -207,6 +208,18 @@ Format all files with Prettier:
 ```bash
 pnpm format
 ```
+
+Run the unit tests (Vitest):
+
+```bash
+pnpm test           # run once
+pnpm test:watch     # rerun on file changes
+pnpm test:coverage  # run once with a coverage report (table + coverage/index.html)
+pnpm test:ui        # Vitest UI in the browser, for local use
+pnpm test:changed   # run once, only tests related to uncommitted changes
+```
+
+The Vitest UI asks for a token. The first time in a browser, copy the full `UI started at …?token=…` URL from the terminal into the address bar; the browser then keeps a login cookie, and later runs open the UI on their own.
 
 Run the release script tests:
 

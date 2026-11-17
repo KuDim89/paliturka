@@ -10,7 +10,12 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint:fsd": "steiger ./src",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui --watch",
+    "test:changed": "vitest run --changed --passWithNoTests"
   },
   "dependencies": {
     "next": "16.4.5",
@@ -19,16 +24,25 @@
   },
   "devDependencies": {
     "@feature-sliced/steiger-plugin": "0.8.2",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
     "@types/node": "^26",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "6.3.0",
+    "@vitest/coverage-v8": "5.1.0",
+    "@vitest/ui": "5.1.0",
     "eslint": "10.14.0",
     "eslint-config-next": "16.4.5",
     "eslint-config-prettier": "10.1.8",
     "jiti": "2.7.0",
+    "jsdom": "31.0.1",
     "prettier": "3.10.1",
     "steiger": "0.10.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite": "8.3.8",
+    "vitest": "5.1.0"
   },
   "engines": {
     "node": ">=26 <27"

@@ -4,3 +4,4 @@ out/
 pnpm-lock.yaml
 storage/
 next-env.d.ts
+coverage/
