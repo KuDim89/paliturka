@@ -55,7 +55,7 @@ Formats we want to support in the future: PDF, FB2, MOBI/AZW3/AZW, DJVU, TXT, DO
 
 ## Stack
 
-Chosen. Next.js, TypeScript and pnpm are installed; the rest is not installed or tested yet:
+Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier and Steiger are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint:
 
 | Area         | Choice                                                                        |
 | ------------ | ----------------------------------------------------------------------------- |
@@ -133,6 +133,7 @@ When a decision is made, move it to the section it belongs to.
 - No hard-coded UI strings: all text goes through i18n, in both `en` and `uk`. Dates, numbers and plurals («8 книжок») are formatted with next-intl for the current locale, never by hand.
 - Colors come from the `--pl-*` theme tokens, which work in both themes.
 - Accessibility target is WCAG 2.2 AA: 4.5:1 text contrast, everything usable from the keyboard, visible focus, semantic elements, focus kept inside open dialogs.
+- Modules: `package.json` sets `"type": "module"`, so every `.js` file is an ES module (`import`/`export`). A config that must use `require` (CommonJS) is named `.cjs`, for example a tool's config copied from older docs.
 - Environment variables: `.env.example` (no secrets) is committed, `.env.local` is ignored. Variables are read in one module and validated with Zod at startup.
 - Standard annotation types are defined once, as named constants with their colors and meanings. An annotation stores its type, not its color, so custom types can be added later without rework.
 - Annotation, bookmark and reading-position locations are stored as EPUB CFI, not as pixel positions or page numbers, so they survive font and screen-size changes.
@@ -190,6 +191,21 @@ Install dependencies, run the app at `http://localhost:3000`, and build it:
 pnpm install
 pnpm dev
 pnpm build
+```
+
+Check the code. Each command exits with a non-zero code on a problem; `lint` also fails on warnings:
+
+```bash
+pnpm lint          # ESLint
+pnpm format:check  # Prettier, check only
+pnpm lint:fsd      # Steiger: FSD rules in src/
+pnpm typecheck     # TypeScript, no output files
+```
+
+Format all files with Prettier:
+
+```bash
+pnpm format
 ```
 
 Run the release script tests:
