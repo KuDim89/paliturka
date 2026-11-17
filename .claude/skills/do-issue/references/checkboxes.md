@@ -19,4 +19,5 @@
    ```
 
    The delimiter must not appear as a whole line in the body; if it does, use another one.
+
 7. **Verify**: `gh issue view N --json body` equals the new body. Compare line by line, ignoring line endings: bodies edited on github.com often use CRLF, the heredoc sends LF, and that is not a content change. Any other difference → report both bodies; never retry the edit blindly.

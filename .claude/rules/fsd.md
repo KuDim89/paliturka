@@ -1,7 +1,7 @@
 ---
 paths:
-  - "app/**/*"
-  - "src/**/*"
+  - 'app/**/*'
+  - 'src/**/*'
 ---
 
 # Feature-Sliced Design with Next.js

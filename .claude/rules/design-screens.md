@@ -1,7 +1,7 @@
 ---
 paths:
-  - "app/**/*"
-  - "src/**/*"
+  - 'app/**/*'
+  - 'src/**/*'
 ---
 
 # Screens
@@ -78,14 +78,14 @@ Popover (280 px): «Ви увійшли як» + email, storage «N МБ з 500 
 
 One set, used on both the library and the empty library:
 
-| Error         | Title                     | Text (shortened)                                                                      |
-| ------------- | ------------------------- | ------------------------------------------------------------------------------------- |
-| Not EPUB      | «Цей файл не підходить.»  | «{file}» is not an EPUB; only DRM-free .epub files can be uploaded                    |
-| Too large     | «Файл завеликий.»         | «{file}» is {n} MB, the limit is 50 MB per file                                       |
-| Quota         | «Не вистачає місця.»      | the book takes {n} MB, only {free} MB of 500 MB is free; delete something first       |
-| Several files | «По одній книжці за раз.» | drop just one .epub file                                                              |
-| Damaged       | «Файл пошкоджений.»       | «{file}» could not be opened, it looks incomplete; try another file                   |
-| DRM           | «Книжка захищена DRM.»    | «{file}» is copy-protected; upload a DRM-free version from a store or the publisher   |
+| Error         | Title                     | Text (shortened)                                                                    |
+| ------------- | ------------------------- | ----------------------------------------------------------------------------------- |
+| Not EPUB      | «Цей файл не підходить.»  | «{file}» is not an EPUB; only DRM-free .epub files can be uploaded                  |
+| Too large     | «Файл завеликий.»         | «{file}» is {n} MB, the limit is 50 MB per file                                     |
+| Quota         | «Не вистачає місця.»      | the book takes {n} MB, only {free} MB of 500 MB is free; delete something first     |
+| Several files | «По одній книжці за раз.» | drop just one .epub file                                                            |
+| Damaged       | «Файл пошкоджений.»       | «{file}» could not be opened, it looks incomplete; try another file                 |
+| DRM           | «Книжка захищена DRM.»    | «{file}» is copy-protected; upload a DRM-free version from a store or the publisher |
 
 ## Empty library
 

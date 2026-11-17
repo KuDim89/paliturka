@@ -3,6 +3,7 @@ name: release-pr
 description: 'Prepares one release: a frozen release/vX.Y.Z branch and a PR into main with a SemVer version, release notes grouped by type and Closes #N for the issues the release finishes. The tag and GitHub Release are created by the release workflow after the merge; this skill reports their status. Use when the user says "release", "make a release", "release PR", "publish the release", "tag the release", "зроби реліз", "реліз", "створи реліз", or runs /release-pr. Not for feature PRs into development (that is create-pr).'
 allowed-tools: Read, Bash(git fetch origin*), Bash(git rev-parse *), Bash(git rev-list *), Bash(git log *), Bash(git ls-remote *), Bash(gh auth status*), Bash(gh repo view *), Bash(gh pr list *), Bash(gh pr view *), Bash(gh pr create *), Bash(gh release view *), Bash(gh run list *), Bash(python3 --version), Bash(python --version), Bash(python3 scripts/release/release_plan.py *), Bash(python scripts/release/release_plan.py *), Bash(rm -rf .claude/tmp/release-pr)
 ---
+
 # Release PR
 
 A release goes `development` → `release/vX.Y.Z` (frozen at one commit) → PR into `main` → the user merges it with a merge commit → `.github/workflows/release.yml` tags the merge commit, publishes the GitHub Release and deletes the release branch.
