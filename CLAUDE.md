@@ -55,7 +55,7 @@ Formats we want to support in the future: PDF, FB2, MOBI/AZW3/AZW, DJVU, TXT, DO
 
 ## Stack
 
-Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger and Vitest are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint:
+Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger, Vitest and Playwright are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint:
 
 | Area         | Choice                                                          |
 | ------------ | --------------------------------------------------------------- |
@@ -158,6 +158,7 @@ Before a task counts as done and a PR is opened:
 app/                 Next.js routes; each route only re-exports a page
 pages/               Empty; stops Next.js from reading src/pages as routes
 src/                 FSD layers: pages, entities, shared
+e2e/                 Playwright end-to-end tests
 scripts/release/     Release plan script and its tests
 package.json         Scripts, dependencies, Node.js and pnpm versions
 pnpm-workspace.yaml  pnpm settings (engineStrict)
@@ -220,6 +221,16 @@ pnpm test:changed   # run once, only tests related to uncommitted changes
 ```
 
 The Vitest UI asks for a token. The first time in a browser, copy the full `UI started at …?token=…` URL from the terminal into the address bar; the browser then keeps a login cookie, and later runs open the UI on their own.
+
+Run the end-to-end tests (Playwright) in Chromium, Firefox and WebKit. The browsers are not npm packages: install them once after cloning, or the first run fails. The tests start `pnpm dev` themselves, or reuse one already running at `http://localhost:3000`:
+
+```bash
+pnpm exec playwright install chromium firefox webkit  # once, and after updating Playwright
+pnpm test:e2e         # run once
+pnpm test:e2e:ui      # Playwright UI mode
+pnpm test:e2e:headed  # run with visible browser windows
+pnpm test:e2e:report  # open the HTML report of the last run
+```
 
 Run the release script tests:
 

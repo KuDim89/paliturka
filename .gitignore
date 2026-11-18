@@ -22,3 +22,7 @@ storage/
 
 # Test coverage reports
 coverage/
+
+# Playwright reports and test artifacts
+playwright-report/
+test-results/
