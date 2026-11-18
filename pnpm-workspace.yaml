@@ -1,3 +1,9 @@
 # pnpm 11+ reads settings from this file, not from .npmrc.
 # Fail the install on a Node.js version outside engines.node.
 engineStrict: true
+# Packages allowed to run install scripts: the SQLite driver and the Prisma migration engine.
+allowBuilds:
+  '@prisma/engines': true
+  better-sqlite3: true
+  # Only checks the Node.js version.
+  prisma: false
