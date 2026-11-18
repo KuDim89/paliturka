@@ -55,7 +55,7 @@ Formats we want to support in the future: PDF, FB2, MOBI/AZW3/AZW, DJVU, TXT, DO
 
 ## Stack
 
-Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger, Vitest and Playwright are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint:
+Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger, Vitest, Playwright and Zod are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint:
 
 | Area         | Choice                                                          |
 | ------------ | --------------------------------------------------------------- |
@@ -135,7 +135,7 @@ When a decision is made, move it to the section it belongs to.
 - Accessibility target is WCAG 2.2 AA: 4.5:1 text contrast, everything usable from the keyboard, visible focus, semantic elements, focus kept inside open dialogs.
 - Unit tests sit next to the code they test, inside the slice. The file name sets the environment: component tests are `*.test.tsx` and run in jsdom; logic and server tests are `*.test.ts` and run in Node, where globals such as streams and `fetch` are real. A `*.test.ts` file that needs the DOM starts with `// @vitest-environment jsdom`.
 - Modules: `package.json` sets `"type": "module"`, so every `.js` file is an ES module (`import`/`export`). A config that must use `require` (CommonJS) is named `.cjs`, for example a tool's config copied from older docs.
-- Environment variables: `.env.example` (no secrets) is committed, `.env.local` is ignored. Variables are read in one module and validated with Zod at startup.
+- Environment variables: `.env.example` (no secrets) is committed, `.env.local` is ignored. Variables are read in one module, `src/shared/config/`, and validated with Zod at startup (`next.config.ts` runs the check). Server code imports `env` from `@/shared/config/index.server`; nothing else reads `process.env`. To add a variable, add a field to `src/shared/config/env/schema.ts` and a line with a comment to `.env.example`.
 - Standard annotation types are defined once, as named constants with their colors and meanings. An annotation stores its type, not its color, so custom types can be added later without rework.
 - Annotation, bookmark and reading-position locations are stored as EPUB CFI, not as pixel positions or page numbers, so they survive font and screen-size changes.
 - Uploads are validated on the server (real EPUB, no DRM, within limits). The browser also runs checks, only for convenience: it can say at once that a file is over 50 MB or is not an `.epub`, without waiting for the upload. These checks are not protection, so the server still validates everything itself. Book files are private and served only to their owner.
