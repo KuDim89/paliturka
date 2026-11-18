@@ -83,7 +83,7 @@ Constraints:
 
 - **Limits:** 50 MB per file, 500 MB quota per user.
 - **Storage folder:** `storage/` is outside `public/` and ignored by git. A route that checks the owner serves the files.
-- **Storage module:** code reaches book files only through one storage module, so a move to object storage changes that module and the upload flow, not the callers. It lives in `src/shared/storage/`; server code uses `bookStorage` from `@/shared/storage/index.server`, and nothing outside that folder uses `fs` on book files. The folder comes from the optional `STORAGE_DIR` variable (default `./storage`).
+- **Storage module:** code reaches book files only through one storage module, so a move to object storage changes that module and the upload flow, not the callers. It lives in `src/shared/storage/`; server code uses `bookStorage` from `@/shared/storage/index.server`, and nothing outside that folder uses `fs` on book files. The folder comes from the optional `STORAGE_DIR` variable (default `./storage`). Temporary files left by a write that crashed are removed when the server starts (`instrumentation.ts`).
 - **Auth:** Google sign-in must be possible to add without rework.
 - **EPUB reader:** if epub.js causes problems, foliate-js is the alternative to try.
 
