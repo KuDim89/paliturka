@@ -55,7 +55,7 @@ Formats we want to support in the future: PDF, FB2, MOBI/AZW3/AZW, DJVU, TXT, DO
 
 ## Stack
 
-Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger, Vitest, Playwright and Zod are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint:
+Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger, Vitest, Playwright, Zod and Prisma are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint:
 
 | Area         | Choice                                                          |
 | ------------ | --------------------------------------------------------------- |
@@ -83,6 +83,7 @@ Constraints:
 
 - **Limits:** 50 MB per file, 500 MB quota per user.
 - **Storage folder:** `storage/` is outside `public/` and ignored by git. A route that checks the owner serves the files.
+- **Database client:** server code uses `db` from `@/shared/db/index.server`, one Prisma client reused across hot reloads. The client is generated into `generated/prisma/` on `pnpm install` and is not committed. The Prisma CLI reads `DATABASE_URL` from `.env.local`, like the app.
 - **Storage module:** code reaches book files only through one storage module, so a move to object storage changes that module and the upload flow, not the callers. It lives in `src/shared/storage/`; server code uses `bookStorage` from `@/shared/storage/index.server`, and nothing outside that folder uses `fs` on book files. The folder comes from the optional `STORAGE_DIR` variable (default `./storage`). Temporary files left by a write that crashed are removed when the server starts (`instrumentation.ts`).
 - **Auth:** Google sign-in must be possible to add without rework.
 - **EPUB reader:** if epub.js causes problems, foliate-js is the alternative to try.
@@ -159,9 +160,11 @@ app/                 Next.js routes; each route only re-exports a page
 pages/               Empty; stops Next.js from reading src/pages as routes
 src/                 FSD layers: pages, entities, shared
 e2e/                 Playwright end-to-end tests
+prisma/              Prisma schema and, later, migrations
+generated/           Generated Prisma client, not committed
 scripts/release/     Release plan script and its tests
 package.json         Scripts, dependencies, Node.js and pnpm versions
-pnpm-workspace.yaml  pnpm settings (engineStrict)
+pnpm-workspace.yaml  pnpm settings (engineStrict, allowed install scripts)
 .nvmrc               Exact Node.js version
 ```
 
@@ -187,10 +190,11 @@ Use the skills; they hold the full rules:
 
 Requirements: Node.js 26 (the exact version is in `.nvmrc`; `nvm use` switches to it) and pnpm 12 (the exact version is in `packageManager`), installed with `npm install -g pnpm@12.18.0`. An older pnpm fails with `packages field missing or empty`, because it does not read a `pnpm-workspace.yaml` that holds only settings. `pnpm install` fails on a Node.js version outside `>=26 <27`.
 
-Install dependencies, run the app at `http://localhost:3000`, and build it:
+Install dependencies, create the local environment file, run the app at `http://localhost:3000`, and build it. The app, `pnpm build` and the e2e tests do not start without `.env.local`:
 
 ```bash
 pnpm install
+cp .env.example .env.local
 pnpm dev
 pnpm build
 ```
@@ -230,6 +234,14 @@ pnpm test:e2e         # run once
 pnpm test:e2e:ui      # Playwright UI mode
 pnpm test:e2e:headed  # run with visible browser windows
 pnpm test:e2e:report  # open the HTML report of the last run
+```
+
+Work with the database (Prisma). `pnpm install` already generates the client:
+
+```bash
+pnpm db:generate  # generate the Prisma client after a schema change
+pnpm db:migrate   # create and apply migrations in development
+pnpm db:studio    # open Prisma Studio
 ```
 
 Run the release script tests:

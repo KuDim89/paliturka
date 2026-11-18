@@ -1,0 +1,11 @@
+// Models are added once the data model is approved (see Open decisions in CLAUDE.md).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+// The URL comes from prisma.config.ts for the CLI and from the driver adapter for the app.
+datasource db {
+  provider = "sqlite"
+}

@@ -26,3 +26,6 @@ coverage/
 # Playwright reports and test artifacts
 playwright-report/
 test-results/
+
+# Generated Prisma client
+/generated/
