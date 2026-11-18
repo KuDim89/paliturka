@@ -2,7 +2,7 @@ node_modules/
 .next/
 out/
 pnpm-lock.yaml
-storage/
+/storage/
 next-env.d.ts
 coverage/
 playwright-report/
