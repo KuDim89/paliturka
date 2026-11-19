@@ -1,0 +1,308 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens from .claude/rules/design.md. Every color is a --pl-* variable with a light value
+ * on :root and a dark value under .dark on <html> (set by the theme script in src/shared/lib/theme).
+ * Components use tokens only. The reader page tokens (sepia) are added with the reader.
+ */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Surfaces and text */
+  --pl-bg: #f3eee4;
+  --pl-surface: #fbf8f2;
+  --pl-pop: #ffffff;
+  --pl-ink: #1e211f;
+  --pl-body: #4f534d;
+  --pl-prose: #33372f;
+  --pl-muted: #5a5e58;
+  --pl-line: #dcd3c2;
+  --pl-line2: #cfc5b3;
+  --pl-card-line: #e2d9c8;
+  --pl-track: #e8e0d1;
+  --pl-tab-on: #fbf8f2;
+  --pl-dash: #a39f95;
+
+  /* Accent */
+  --pl-accent: #2e4b3c;
+  --pl-on-accent: #f3eee4;
+  --pl-link: #2e4b3c;
+  --pl-tint: rgba(46, 75, 60, 0.1);
+  --pl-focus-ring: rgba(46, 75, 60, 0.14);
+  --pl-chip-on: #1e211f;
+  --pl-chip-on-text: #f3eee4;
+  --pl-chip-all: #e8e0d1;
+  --pl-chip-all-border: #1e211f;
+  --pl-flash: rgba(46, 75, 60, 0.22);
+  --pl-new-ring: #2e4b3c;
+
+  /* States */
+  --pl-err: #b3261e;
+  --pl-err-bg: rgba(179, 38, 30, 0.07);
+  --pl-err-line: rgba(179, 38, 30, 0.25);
+  --pl-err-ring: rgba(179, 38, 30, 0.14);
+  --pl-danger: #9a2f2a;
+  --pl-on-danger: #fbf8f2;
+  --pl-danger-bg: rgba(154, 47, 42, 0.08);
+  --pl-warn: #b4561a;
+  --pl-warn-bg: rgba(208, 106, 31, 0.13);
+
+  /* Annotations */
+  --pl-hl-pink: #f6cad6;
+  --pl-hl-green: #cfe5c6;
+  --pl-hl-orange: #f8d0a6;
+  --pl-hl-yellow: #f5e28c;
+  --pl-dot-pink: #c8476c;
+  --pl-dot-green: #3f8a4e;
+  --pl-dot-orange: #d06a1f;
+  --pl-dot-yellow: #b8930f;
+  --pl-select: #cfe0f3;
+
+  /* Book statuses */
+  --pl-status-unread: #a39f95;
+  --pl-status-reading: #d06a1f;
+  --pl-status-read: #3f8a4e;
+
+  /* Brand and decor */
+  --pl-band: #2e4b3c;
+  --pl-band-text: #f3eee4;
+  --pl-band-muted: #c9d6cc;
+  --pl-gold: #d8bc7a;
+  --pl-shelf: #c9bba3;
+  --pl-logo-cover: #2e4b3c;
+  --pl-logo-ribbon: #b8964f;
+  --pl-logo-frame: #b8964f;
+  --pl-logo-shade: transparent;
+  --pl-scrim: rgba(30, 33, 31, 0.45);
+  --pl-book-cloth: #2e4b3c;
+  --pl-drop-bg: rgba(243, 238, 228, 0.88);
+
+  /* Shadows */
+  --pl-shadow-pop: 0 18px 40px -18px rgba(30, 33, 31, 0.35);
+  --pl-shadow-dialog: 0 30px 60px -20px rgba(0, 0, 0, 0.5);
+  --pl-shadow-cover-sm: 0 1px 0 rgba(0, 0, 0, 0.08), 0 14px 26px -16px rgba(30, 33, 31, 0.55);
+  --pl-shadow-cover-lg: 0 24px 40px -22px rgba(30, 33, 31, 0.6);
+
+  /* Radii (the same in both themes) */
+  --pl-radius-pill: 999px;
+  --pl-radius-sheet: 22px;
+  --pl-radius-dialog: 18px;
+  --pl-radius-menu: 16px;
+  --pl-radius-banner: 12px;
+  --pl-radius-field: 10px;
+
+  /*
+   * shadcn/ui variables, pointed at the tokens. They switch with the theme through the tokens, so
+   * .dark does not repeat them. shadcn's --accent is a hover background, not the brand accent.
+   */
+  --background: var(--pl-bg);
+  --foreground: var(--pl-ink);
+  --card: var(--pl-surface);
+  --card-foreground: var(--pl-ink);
+  --popover: var(--pl-surface);
+  --popover-foreground: var(--pl-ink);
+  --primary: var(--pl-accent);
+  --primary-foreground: var(--pl-on-accent);
+  --secondary: var(--pl-track);
+  --secondary-foreground: var(--pl-ink);
+  --muted: var(--pl-track);
+  --muted-foreground: var(--pl-muted);
+  --accent: var(--pl-tint);
+  --accent-foreground: var(--pl-ink);
+  --destructive: var(--pl-danger);
+  --border: var(--pl-line);
+  --input: var(--pl-line2);
+  --ring: var(--pl-link);
+  --radius: var(--pl-radius-field);
+}
+
+.dark {
+  /* Surfaces and text */
+  --pl-bg: #151816;
+  --pl-surface: #1e2220;
+  --pl-pop: #262a27;
+  --pl-ink: #ece6da;
+  --pl-body: #c3bdb0;
+  --pl-prose: #d6d0c3;
+  --pl-muted: #a39f95;
+  --pl-line: #343935;
+  --pl-line2: #454b46;
+  --pl-card-line: #2c312d;
+  --pl-track: #2c312d;
+  --pl-tab-on: #3a403b;
+  --pl-dash: #5a5f59;
+
+  /* Accent */
+  --pl-accent: #8fbc9f;
+  --pl-on-accent: #12201a;
+  --pl-link: #9cc7ab;
+  --pl-tint: rgba(143, 188, 159, 0.16);
+  --pl-focus-ring: rgba(156, 199, 171, 0.22);
+  --pl-chip-on: #ece6da;
+  --pl-chip-on-text: #151816;
+  --pl-chip-all: #2c312d;
+  --pl-chip-all-border: #ece6da;
+  --pl-flash: rgba(143, 188, 159, 0.35);
+  --pl-new-ring: #9cc7ab;
+
+  /* States */
+  --pl-err: #f2a39b;
+  --pl-err-bg: rgba(242, 163, 155, 0.1);
+  --pl-err-line: rgba(242, 163, 155, 0.35);
+  --pl-err-ring: rgba(242, 163, 155, 0.22);
+  --pl-danger: #e58a80;
+  --pl-on-danger: #1e1514;
+  --pl-danger-bg: rgba(229, 138, 128, 0.12);
+  --pl-warn: #e88a3c;
+  --pl-warn-bg: rgba(232, 138, 60, 0.16);
+
+  /* Annotations */
+  --pl-hl-pink: rgba(232, 120, 155, 0.32);
+  --pl-hl-green: rgba(110, 190, 125, 0.3);
+  --pl-hl-orange: rgba(240, 150, 80, 0.32);
+  --pl-hl-yellow: rgba(240, 210, 90, 0.28);
+  --pl-dot-pink: #e0708f;
+  --pl-dot-green: #5faf6e;
+  --pl-dot-orange: #e88a3c;
+  --pl-dot-yellow: #e3c431;
+  --pl-select: rgba(120, 170, 220, 0.3);
+
+  /* Book statuses */
+  --pl-status-unread: #7e7a72;
+  --pl-status-reading: #e88a3c;
+  --pl-status-read: #5faf6e;
+
+  /* Brand and decor */
+  --pl-band: #1f3a2e;
+  --pl-band-text: #ece6da;
+  --pl-band-muted: #a9c2b1;
+  --pl-gold: #d8bc7a;
+  --pl-shelf: #4a433a;
+  --pl-logo-cover: #3b6650;
+  --pl-logo-ribbon: #ebc66a;
+  --pl-logo-frame: #a9cdb5;
+  --pl-logo-shade: rgba(0, 0, 0, 0.18);
+  --pl-scrim: rgba(0, 0, 0, 0.6);
+  --pl-book-cloth: #3e6b53;
+  --pl-drop-bg: rgba(21, 24, 22, 0.82);
+
+  /* Shadows */
+  --pl-shadow-pop: 0 18px 40px -16px rgba(0, 0, 0, 0.75);
+  --pl-shadow-dialog: 0 30px 60px -20px rgba(0, 0, 0, 0.5);
+  --pl-shadow-cover-sm: 0 1px 0 rgba(255, 255, 255, 0.04), 0 14px 26px -14px rgba(0, 0, 0, 0.9);
+  --pl-shadow-cover-lg: 0 24px 40px -22px rgba(0, 0, 0, 0.9);
+}
+
+/* Tailwind utilities: bg-pl-bg, text-pl-ink, shadow-pl-pop, rounded-pl-menu, font-serif and so on. */
+@theme inline {
+  --font-sans: var(--font-onest);
+  --font-serif: var(--font-literata);
+
+  --color-pl-bg: var(--pl-bg);
+  --color-pl-surface: var(--pl-surface);
+  --color-pl-pop: var(--pl-pop);
+  --color-pl-ink: var(--pl-ink);
+  --color-pl-body: var(--pl-body);
+  --color-pl-prose: var(--pl-prose);
+  --color-pl-muted: var(--pl-muted);
+  --color-pl-line: var(--pl-line);
+  --color-pl-line2: var(--pl-line2);
+  --color-pl-card-line: var(--pl-card-line);
+  --color-pl-track: var(--pl-track);
+  --color-pl-tab-on: var(--pl-tab-on);
+  --color-pl-dash: var(--pl-dash);
+  --color-pl-accent: var(--pl-accent);
+  --color-pl-on-accent: var(--pl-on-accent);
+  --color-pl-link: var(--pl-link);
+  --color-pl-tint: var(--pl-tint);
+  --color-pl-focus-ring: var(--pl-focus-ring);
+  --color-pl-chip-on: var(--pl-chip-on);
+  --color-pl-chip-on-text: var(--pl-chip-on-text);
+  --color-pl-chip-all: var(--pl-chip-all);
+  --color-pl-chip-all-border: var(--pl-chip-all-border);
+  --color-pl-flash: var(--pl-flash);
+  --color-pl-new-ring: var(--pl-new-ring);
+  --color-pl-err: var(--pl-err);
+  --color-pl-err-bg: var(--pl-err-bg);
+  --color-pl-err-line: var(--pl-err-line);
+  --color-pl-err-ring: var(--pl-err-ring);
+  --color-pl-danger: var(--pl-danger);
+  --color-pl-on-danger: var(--pl-on-danger);
+  --color-pl-danger-bg: var(--pl-danger-bg);
+  --color-pl-warn: var(--pl-warn);
+  --color-pl-warn-bg: var(--pl-warn-bg);
+  --color-pl-hl-pink: var(--pl-hl-pink);
+  --color-pl-hl-green: var(--pl-hl-green);
+  --color-pl-hl-orange: var(--pl-hl-orange);
+  --color-pl-hl-yellow: var(--pl-hl-yellow);
+  --color-pl-dot-pink: var(--pl-dot-pink);
+  --color-pl-dot-green: var(--pl-dot-green);
+  --color-pl-dot-orange: var(--pl-dot-orange);
+  --color-pl-dot-yellow: var(--pl-dot-yellow);
+  --color-pl-select: var(--pl-select);
+  --color-pl-status-unread: var(--pl-status-unread);
+  --color-pl-status-reading: var(--pl-status-reading);
+  --color-pl-status-read: var(--pl-status-read);
+  --color-pl-band: var(--pl-band);
+  --color-pl-band-text: var(--pl-band-text);
+  --color-pl-band-muted: var(--pl-band-muted);
+  --color-pl-gold: var(--pl-gold);
+  --color-pl-shelf: var(--pl-shelf);
+  --color-pl-logo-cover: var(--pl-logo-cover);
+  --color-pl-logo-ribbon: var(--pl-logo-ribbon);
+  --color-pl-logo-frame: var(--pl-logo-frame);
+  --color-pl-logo-shade: var(--pl-logo-shade);
+  --color-pl-scrim: var(--pl-scrim);
+  --color-pl-book-cloth: var(--pl-book-cloth);
+  --color-pl-drop-bg: var(--pl-drop-bg);
+
+  --shadow-pl-pop: var(--pl-shadow-pop);
+  --shadow-pl-dialog: var(--pl-shadow-dialog);
+  --shadow-pl-cover-sm: var(--pl-shadow-cover-sm);
+  --shadow-pl-cover-lg: var(--pl-shadow-cover-lg);
+
+  --radius-pl-pill: var(--pl-radius-pill);
+  --radius-pl-sheet: var(--pl-radius-sheet);
+  --radius-pl-dialog: var(--pl-radius-dialog);
+  --radius-pl-menu: var(--pl-radius-menu);
+  --radius-pl-banner: var(--pl-radius-banner);
+  --radius-pl-field: var(--pl-radius-field);
+
+  /* Names shadcn/ui components use. */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground;
+  }
+}

@@ -55,7 +55,7 @@ Formats we want to support in the future: PDF, FB2, MOBI/AZW3/AZW, DJVU, TXT, DO
 
 ## Stack
 
-Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger, Vitest, Playwright, Zod and Prisma are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint:
+Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger, Vitest, Playwright, Zod, Prisma, Tailwind CSS and shadcn/ui are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint. The exception is `postcss.config.mjs`: Next.js does not read a TypeScript PostCSS config:
 
 | Area         | Choice                                                          |
 | ------------ | --------------------------------------------------------------- |
@@ -85,6 +85,8 @@ Constraints:
 - **Storage folder:** `storage/` is outside `public/` and ignored by git. A route that checks the owner serves the files.
 - **Database client:** server code uses `db` from `@/shared/db/index.server`, one Prisma client reused across hot reloads. The client is generated into `generated/prisma/` on `pnpm install` and is not committed. The Prisma CLI reads `DATABASE_URL` from `.env.local`, like the app.
 - **Storage module:** code reaches book files only through one storage module, so a move to object storage changes that module and the upload flow, not the callers. It lives in `src/shared/storage/`; server code uses `bookStorage` from `@/shared/storage/index.server`, and nothing outside that folder uses `fs` on book files. The folder comes from the optional `STORAGE_DIR` variable (default `./storage`). Temporary files left by a write that crashed are removed when the server starts (`instrumentation.ts`).
+- **Styling:** the design tokens are `--pl-*` variables in `app/globals.css`, light on `:root` and dark under `.dark`, with Tailwind utilities such as `bg-pl-bg` and `text-pl-ink`. The shadcn/ui variables there point at the tokens. shadcn/ui uses Radix and adds components to `src/shared/ui` and its `cn` helper to `src/shared/lib/cn.ts` (`components.json`); no components are added yet. Literata and Onest are local files in `src/shared/ui/fonts/` (how they were made is in its `README.md`), used as `font-serif` and `font-sans`.
+- **Theme:** the logic is in `src/shared/lib/theme/`. An inline script in the root layout reads the `theme` cookie before the page is painted and falls back to the system theme; `setTheme` writes the cookie. The root layout does not call `cookies()`, so pages stay static.
 - **Auth:** Google sign-in must be possible to add without rework.
 - **EPUB reader:** if epub.js causes problems, foliate-js is the alternative to try.
 
@@ -156,13 +158,14 @@ Before a task counts as done and a PR is opened:
 .claude/rules/       Rules that load for matching paths
 .claude/skills/      Workflow skills (see Git workflow)
 .github/workflows/   Release workflow
-app/                 Next.js routes; each route only re-exports a page
+app/                 Next.js routes; each route only re-exports a page; globals.css holds the tokens
 pages/               Empty; stops Next.js from reading src/pages as routes
 src/                 FSD layers: pages, entities, shared
 e2e/                 Playwright end-to-end tests
 prisma/              Prisma schema and, later, migrations
 generated/           Generated Prisma client, not committed
 scripts/release/     Release plan script and its tests
+components.json      shadcn/ui settings
 package.json         Scripts, dependencies, Node.js and pnpm versions
 pnpm-workspace.yaml  pnpm settings (engineStrict, allowed install scripts)
 .nvmrc               Exact Node.js version
