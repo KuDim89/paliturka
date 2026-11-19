@@ -153,7 +153,7 @@ Headings use letter-spacing −0.02em.
 
 ## Radii
 
-`--pl-radius-pill` 999 (buttons, chips, segmented controls), `sheet` 22 (bottom sheets on phone), `dialog` 18, `menu` 16 (menus, cards, popovers), `banner` 12–14 (status and error banners), `field` 10 (inputs, menu items).
+`--pl-radius-pill` 999 (buttons, chips, segmented controls), `sheet` 22 (bottom sheets on phone), `dialog` 18, `menu` 16 (menus, cards, popovers), `banner` 12 (status and error banners; the design artifact gives 12–14), `field` 10 (inputs, menu items).
 
 ## Sizes
 
