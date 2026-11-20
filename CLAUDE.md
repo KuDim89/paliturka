@@ -158,6 +158,7 @@ Before a task counts as done and a PR is opened:
 .claude/rules/       Rules that load for matching paths
 .claude/skills/      Workflow skills (see Git workflow)
 .github/workflows/   Release workflow
+.vscode/             Shared VS Code settings and recommended extensions
 app/                 Next.js routes; each route only re-exports a page; globals.css holds the tokens
 pages/               Empty; stops Next.js from reading src/pages as routes
 src/                 FSD layers: pages, entities, shared
@@ -216,6 +217,8 @@ Format all files with Prettier:
 ```bash
 pnpm format
 ```
+
+In VS Code, install the recommended extensions it offers when the project opens: Tailwind CSS IntelliSense, ESLint and Prettier. `.vscode/settings.json` opens `.css` files as Tailwind CSS (so `@theme` and `@apply` are not flagged), formats with Prettier on save and runs ESLint with the project config, so the editor reports the same problems as `pnpm lint` and `pnpm format:check`.
 
 Run the unit tests (Vitest):
 
