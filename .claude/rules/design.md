@@ -8,7 +8,7 @@ paths:
 
 ## Source and precedence
 
-- The design is the private Design artifact https://claude.ai/artifact/8UECDkUdg6bzWs2ZWCyrot: page `Палітурка` (all screens), `Лого` (logo) and `Токени` (tokens). Read it with the Artifact tool when a detail is not written here.
+- The design is the private Design artifact https://claude.ai/artifact/8UECDkUdg6bzWs2ZWCyrot: page `Палітурка` (all screens), `Брейкпоінти` (every screen at each breakpoint), `Лого` (logo) and `Токени` (tokens). Read it with the Artifact tool when a detail is not written here.
 - The prototypes are a visual reference and the source of UI copy. They are not code to copy: their localStorage state, sample books, demo props and unwired buttons are not the spec.
 - Product rules in `CLAUDE.md` win over prototype behaviour. Screens and their behaviour are in `.claude/rules/design-screens.md`.
 
@@ -138,18 +138,38 @@ The generated cloth covers, the landing shelf spines, the pin and the note paper
 
 Fonts: Literata and Onest from Google Fonts, with the Cyrillic subset.
 
-| Style               | Size, px     | Use                                         |
-| ------------------- | ------------ | ------------------------------------------- |
-| Literata 500        | 58 / 48 / 34 | Page title (desktop / tablet / phone)       |
-| Literata 500        | 30 / 24      | Section heading                             |
-| Literata 400        | 18–19        | Book text, quotes, summary                  |
-| Literata 600 italic | 22           | Wordmark `paliturka`                        |
-| Onest 500           | 15–17        | Buttons, navigation                         |
-| Onest 400           | 16           | Main interface text, inputs                 |
-| Onest 400           | 13–14        | Captions, metadata, errors                  |
-| Onest 600 caps      | 12–13        | Eyebrows, group names, tracking 0.08–0.14em |
+| Style               | Size, px | Use                                         |
+| ------------------- | -------- | ------------------------------------------- |
+| Literata 500        | 30–76    | Page titles (H1), per screen: see Headings  |
+| Literata 500        | 22–48    | Section headings (H2, H3): see Headings     |
+| Literata 400        | 18–19    | Book text, quotes, summary                  |
+| Literata 600 italic | 22       | Wordmark `paliturka`                        |
+| Onest 500           | 15–17    | Buttons, navigation                         |
+| Onest 400           | 16       | Main interface text, inputs                 |
+| Onest 400           | 13–14    | Captions, metadata, errors                  |
+| Onest 600 caps      | 12–13    | Eyebrows, group names, tracking 0.08–0.14em |
 
 Headings use letter-spacing −0.02em.
+
+### Headings
+
+Each screen has its own heading sizes; there is no shared set. All are Literata 500. "640 → 1024" means the size grows linearly between 640 and 1024 px: `clamp(T, calc(T + (D − T) * (100vw - 640px) / 384), D)`, where T is the tablet size and D the desktop size. Above 1024 px the sizes do not change.
+
+| Token                  | Where                                                     | Desktop, px | Tablet, px      | Phone, px |
+| ---------------------- | --------------------------------------------------------- | ----------- | --------------- | --------- |
+| `--pl-text-h1-landing` | Landing: hero title                                       | 76          | 64 → 76 (fluid) | 42        |
+| `--pl-text-h2-landing` | Landing: section headings                                 | 48          | 42 → 48 (fluid) | 32        |
+| `--pl-text-h3-landing` | Landing: call to action at the bottom                     | 44          | 38 → 44 (fluid) | 28        |
+| `--pl-text-h1-book`    | Book page: title                                          | 58          | 48 → 58 (fluid) | 34        |
+| `--pl-text-h1-library` | Library: «Моя бібліотека»                                 | 56          | 48 → 56 (fluid) | 36        |
+| `--pl-text-h1-legal`   | Terms and privacy                                         | 52          | 44 → 52 (fluid) | 34        |
+| `--pl-text-h1-empty`   | Empty library                                             | 48          | 48              | 32        |
+| `--pl-text-h1-auth`    | Sign in, sign up, password reset, email, account deletion | 40          | 40              | 32        |
+| `--pl-text-h1-chapter` | Reader: chapter title                                     | 36          | 36              | 30        |
+| `--pl-text-h2-book`    | Book page: «Анотації», «Мої коментарі до книжки»          | 30          | 30              | 24        |
+| `--pl-text-h2-legal`   | Terms and privacy: section headings                       | 26          | 26              | 22        |
+
+These tokens are not in `app/globals.css` yet: the first screen that uses one adds it, with the fluid value as a `clamp()` and the phone value below `sm`.
 
 ## Radii
 
@@ -158,11 +178,13 @@ Headings use letter-spacing −0.02em.
 ## Sizes
 
 - Primary button 52 px high; inputs and dialog buttons 48; icon buttons 44 (the minimum touch target); buttons in the selection toolbar and Aa panel 40.
-- Side gutters: 16 px on phone, 24 px on tablet and desktop. Content max width 1280 px.
+- Side gutters: 16 px on phone, 24 px on tablet and desktop.
+- Content max width 1280 px, not counting the side gutters (the container is 1328 px with them). From 1536 px the library and the empty library use 1408 px (container 1456 px) so the library grid fits a seventh column; every other screen stays at 1280 px.
 
 ## Layout
 
-- Breakpoints: phone below 640 px, tablet 640–1023 px, desktop from 1024 px.
+- Breakpoints are the Tailwind defaults, all five in use: `sm` 640, `md` 768, `lg` 1024, `xl` 1280, `2xl` 1536 px. They map to three tiers: phone below `sm`, tablet from `sm` to below `lg`, desktop from `lg`. `md`, `xl` and `2xl` refine a layout inside its tier (more grid columns, a wider container); `design-screens.md` says what changes on each screen. `app/globals.css` does not redefine them.
+- Between 640 and 1024 px some headings grow fluidly (see Headings), so they do not jump at `lg`.
 - On phone, dialogs become bottom sheets: 22 px top corners, a grab handle, the `scrim` overlay, primary button first.
 - On phone, the language switch moves into the account menu (app screens) or the settings panel (landing).
 
