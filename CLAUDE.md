@@ -55,7 +55,7 @@ Formats we want to support in the future: PDF, FB2, MOBI/AZW3/AZW, DJVU, TXT, DO
 
 ## Stack
 
-Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger, Vitest, Playwright, Zod, Prisma, Tailwind CSS and shadcn/ui are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint. The exception is `postcss.config.mjs`: Next.js does not read a TypeScript PostCSS config:
+Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger, Vitest, Playwright, Zod, Prisma, Tailwind CSS, shadcn/ui and next-intl are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint. The exception is `postcss.config.mjs`: Next.js does not read a TypeScript PostCSS config:
 
 | Area         | Choice                                                          |
 | ------------ | --------------------------------------------------------------- |
@@ -86,7 +86,9 @@ Constraints:
 - **Database client:** server code uses `db` from `@/shared/db/index.server`, one Prisma client reused across hot reloads. The client is generated into `generated/prisma/` on `pnpm install` and is not committed. The Prisma CLI reads `DATABASE_URL` from `.env.local`, like the app.
 - **Storage module:** code reaches book files only through one storage module, so a move to object storage changes that module and the upload flow, not the callers. It lives in `src/shared/storage/`; server code uses `bookStorage` from `@/shared/storage/index.server`, and nothing outside that folder uses `fs` on book files. The folder comes from the optional `STORAGE_DIR` variable (default `./storage`). Temporary files left by a write that crashed are removed when the server starts (`instrumentation.ts`).
 - **Styling:** the design tokens are `--pl-*` variables in `app/globals.css`, light on `:root` and dark under `.dark`, with Tailwind utilities such as `bg-pl-bg` and `text-pl-ink`. The shadcn/ui variables there point at the tokens. shadcn/ui uses Radix and adds components to `src/shared/ui` and its `cn` helper to `src/shared/lib/cn.ts` (`components.json`); no components are added yet. Literata and Onest are local files in `src/shared/ui/fonts/` (how they were made is in its `README.md`), used as `font-serif` and `font-sans`.
-- **Theme:** the logic is in `src/shared/lib/theme/`. An inline script in the root layout reads the `theme` cookie before the page is painted and falls back to the system theme; `setTheme` writes the cookie. The root layout does not call `cookies()`, so pages stay static.
+- **Theme:** next-themes, configured once in `src/shared/lib/theme/ThemeProvider.tsx` and rendered by the `<html>` shell (`src/shared/ui/html-document/`). Its script sets the `dark` class and `color-scheme` on `<html>` before the page is painted, follows the system theme until the user picks one, and keeps the choice in `localStorage` under `theme`; it applies the theme again if React re-renders the page (for example after a browser translator changes the DOM). Components switch the theme with `useTheme().setTheme` from `@/shared/lib/theme`. The server does not know the theme, so pages stay static. In dev mode, a hydration mismatch caused by an extension shows a React warning about the script tag; it is harmless.
+- **Locale in the URL:** every page lives under `app/[locale]/` (`/en/...`, `/uk/...`), with `en` as the default. `proxy.ts` (Next.js middleware) redirects a URL without a locale to the one in the `NEXT_LOCALE` cookie, then the browser language, then `en`; it skips `/api`, `/_next` and files with an extension. `app/[locale]/layout.tsx` is the root layout: it sets `<html lang>`, allows only `en` and `uk` (`dynamicParams = false`), and uses `generateStaticParams` and `setRequestLocale`; every page under it calls `setRequestLocale` too, or it becomes dynamic. Every URL that matches no route gets `app/global-not-found.tsx` (the `experimental.globalNotFound` flag in `next.config.ts`), a full 404 document in the locale from the URL. Do not add `notFound()` pages or `not-found.tsx` under `[locale]`: with a root layout in a dynamic segment, Next.js renders them on the client only. The 404 page is a placeholder until the design's page is built in stage 2.
+- **i18n:** the setup is in `src/shared/i18n/` (routing, request config, navigation helpers); use its `Link`, `redirect`, `useRouter` and `usePathname` so links keep the locale. Messages are `src/shared/i18n/messages/en.json` and `uk.json`; keys are typed from `en.json`, so an unknown key fails `pnpm typecheck`. To add a string: add the key to both files (a unit test fails when they differ), then use `useTranslations` in components or `getTranslations` in async server code. Unit tests render translated components with `renderWithIntl` from `@/shared/i18n/index.testing`.
 - **Auth:** Google sign-in must be possible to add without rework.
 - **EPUB reader:** if epub.js causes problems, foliate-js is the alternative to try.
 
@@ -117,7 +119,7 @@ Within each stage, build and test the API first, then the frontend. The API uses
 
 Not chosen yet. When the work reaches one of these, remind the user and decide it together first. Do not choose, create or add a dependency for any of them without the user's approval:
 
-- **Routes:** the page map and URL structure, including whether the locale is in the URL. Decided while building the pages.
+- **Routes:** the page map and URL structure. Decided while building the pages. The locale part is decided (see Constraints: the locale is in the URL).
 - **Data model:** entities, fields and relations. Proposed when the work on models starts; no Prisma schema before approval.
 - **API conventions:** response and error format, error keys for i18n, owner checks. Ask when the API work starts. Input validation uses Zod.
 - **EPUB parsing on the server:** the library for metadata, covers, DRM and damaged-file checks.
@@ -159,7 +161,8 @@ Before a task counts as done and a PR is opened:
 .claude/skills/      Workflow skills (see Git workflow)
 .github/workflows/   Release workflow
 .vscode/             Shared VS Code settings and recommended extensions
-app/                 Next.js routes; each route only re-exports a page; globals.css holds the tokens
+app/                 Next.js routes, pages under app/[locale]/; each route only re-exports a page; globals.css holds the tokens
+proxy.ts             Locale redirects (Next.js middleware)
 pages/               Empty; stops Next.js from reading src/pages as routes
 src/                 FSD layers: pages, entities, shared
 e2e/                 Playwright end-to-end tests

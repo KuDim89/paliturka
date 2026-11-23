@@ -7,3 +7,7 @@ allowBuilds:
   better-sqlite3: true
   # Only checks the Node.js version.
   prisma: false
+  # Pulled in by next-intl for its message extractor, which the project does not use. Their native
+  # binaries come as optional dependencies, so the install scripts are not needed.
+  '@parcel/watcher': false
+  '@swc/core': false

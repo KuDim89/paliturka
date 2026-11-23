@@ -1,0 +1,15 @@
+{
+  "home": {
+    "name": "paliturka",
+    "tagline": "Your personal cloud library",
+    "title": "paliturka · Your personal cloud library"
+  },
+  "library": {
+    "bookCount": "{count, plural, one {# book} other {# books}}"
+  },
+  "notFound": {
+    "eyebrow": "Error 404",
+    "heading": "This page isn’t here",
+    "toHome": "Home page"
+  }
+}

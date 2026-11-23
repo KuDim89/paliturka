@@ -1,3 +1,3 @@
-export { themeInitScript } from './init-script';
-export { setTheme } from './set-theme';
-export { applyTheme, isTheme, resolveTheme, THEME_COOKIE, THEMES, type Theme } from './theme';
+export { ThemeProvider } from './ThemeProvider';
+// `setTheme('light' | 'dark' | 'system')` and the resolved theme, for the theme toggle.
+export { useTheme } from 'next-themes';
