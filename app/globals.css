@@ -302,6 +302,12 @@
     @apply border-border outline-ring/50;
   }
 
+  /* <html> gets the background too: otherwise the browser paints the body background on the whole
+     window, and Chrome does not repaint those areas when the theme changes. */
+  html {
+    @apply bg-background;
+  }
+
   body {
     @apply bg-background font-sans text-foreground;
   }

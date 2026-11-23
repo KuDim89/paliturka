@@ -6,6 +6,9 @@ export default defineConfig({
   // Resolves the `@/*` alias from tsconfig.json, so it is defined in one place.
   resolve: { tsconfigPaths: true },
   test: {
+    // next-intl imports `next/navigation` without an extension, which Node's ESM loader does not
+    // resolve; letting Vite process next-intl fixes it.
+    server: { deps: { inline: ['next-intl'] } },
     projects: [
       {
         extends: true,

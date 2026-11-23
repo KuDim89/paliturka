@@ -5,7 +5,7 @@ const WIDTHS = [375, 640, 768, 1024, 1280, 1536];
 const CONTENT_MAX = 1280;
 
 // Add each new screen here. `content` is the element that holds the page's content container.
-const PAGES = [{ name: 'home', path: '/', content: 'main' }];
+const PAGES = [{ name: 'home', path: '/en', content: 'main' }];
 
 function gutter(width: number) {
   return width < 640 ? 16 : 24;

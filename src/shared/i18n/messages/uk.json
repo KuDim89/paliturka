@@ -1,0 +1,15 @@
+{
+  "home": {
+    "name": "paliturka",
+    "tagline": "Твоя особиста хмарна бібліотека",
+    "title": "paliturka · Твоя особиста хмарна бібліотека"
+  },
+  "library": {
+    "bookCount": "{count, plural, one {# книжка} few {# книжки} many {# книжок} other {# книжки}}"
+  },
+  "notFound": {
+    "eyebrow": "Помилка 404",
+    "heading": "Такої сторінки немає",
+    "toHome": "На головну"
+  }
+}
