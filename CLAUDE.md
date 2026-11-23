@@ -206,6 +206,8 @@ pnpm dev
 pnpm build
 ```
 
+To test on a phone or tablet on the same network: put the computer's local IP (`pnpm dev` prints it as `Network`) into `DEV_ALLOWED_ORIGINS` in `.env.local`, for example `DEV_ALLOWED_ORIGINS=192.168.1.20`, restart `pnpm dev`, and open `http://<ip>:3000/uk` on the device. Without it, Next.js blocks the dev assets for that address and parts of the page stay blank. The IP can change when the network does; never commit it.
+
 Check the code. Each command exits with a non-zero code on a problem; `lint` also fails on warnings:
 
 ```bash
