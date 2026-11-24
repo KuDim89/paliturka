@@ -32,8 +32,14 @@ export default defineConfig({
     ],
     coverage: {
       provider: 'v8',
-      include: ['src/**/*.{ts,tsx}', 'app/**/*.{ts,tsx}'],
-      exclude: ['**/*.test.ts', '**/*.test.tsx'],
+      // Only code with logic to test, so the thresholds measure real code. Left out: app/ (Next.js
+      // routes and special files, which only wire FSD pages in and are covered by the e2e tests),
+      // slice public APIs and entry points (index.ts, index.server.ts: re-exports and singletons
+      // built from tested code), and type declarations. Root config files and generated/ are
+      // outside src/.
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['**/*.test.ts', '**/*.test.tsx', 'src/**/index*.ts', '**/*.d.ts'],
+      thresholds: { statements: 80, branches: 80, functions: 80, lines: 80 },
       // List fully covered files too, so the table shows every file.
       reporter: [['text', { skipFull: false }], 'html'],
     },

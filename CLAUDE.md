@@ -57,19 +57,19 @@ Formats we want to support in the future: PDF, FB2, MOBI/AZW3/AZW, DJVU, TXT, DO
 
 Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger, Vitest, Playwright, Zod, Prisma, Tailwind CSS, shadcn/ui and next-intl are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint. The exception is `postcss.config.mjs`: Next.js does not read a TypeScript PostCSS config:
 
-| Area         | Choice                                                          |
-| ------------ | --------------------------------------------------------------- |
-| Framework    | Next.js with TypeScript                                         |
-| Database     | SQLite file, through Prisma                                     |
-| File storage | Local folder                                                    |
-| Auth         | Better Auth                                                     |
-| Email        | Printed to the console (verification and password reset links)  |
-| Validation   | Zod                                                             |
-| i18n         | next-intl                                                       |
-| Styling      | Tailwind CSS and shadcn/ui                                      |
-| EPUB reader  | epub.js                                                         |
-| Tooling      | pnpm, ESLint, Prettier, Steiger, GitHub Actions (PR checks)     |
-| Tests        | Vitest (unit), Playwright (e2e for sign-in, upload and reading) |
+| Area         | Choice                                                                 |
+| ------------ | ---------------------------------------------------------------------- |
+| Framework    | Next.js with TypeScript                                                |
+| Database     | SQLite file, through Prisma                                            |
+| File storage | Local folder                                                           |
+| Auth         | Better Auth                                                            |
+| Email        | Printed to the console (verification and password reset links)         |
+| Validation   | Zod                                                                    |
+| i18n         | next-intl                                                              |
+| Styling      | Tailwind CSS and shadcn/ui                                             |
+| EPUB reader  | epub.js                                                                |
+| Tooling      | pnpm, ESLint, Prettier, Steiger, GitHub Actions (PR checks), cross-env |
+| Tests        | Vitest (unit), Playwright (e2e for sign-in, upload and reading)        |
 
 Local data lives in a `storage/` folder:
 
@@ -139,8 +139,10 @@ When a decision is made, move it to the section it belongs to.
 - Colors come from the `--pl-*` theme tokens, which work in both themes.
 - Accessibility target is WCAG 2.2 AA: 4.5:1 text contrast, everything usable from the keyboard, visible focus, semantic elements, focus kept inside open dialogs.
 - Unit tests sit next to the code they test, inside the slice. The file name sets the environment: component tests are `*.test.tsx` and run in jsdom; logic and server tests are `*.test.ts` and run in Node, where globals such as streams and `fetch` are real. A `*.test.ts` file that needs the DOM starts with `// @vitest-environment jsdom`.
+- Coverage: `pnpm test:coverage` fails below 80% of statements, branches, functions or lines. It counts only `src/`, without public API and entry-point files (`index*.ts`) and type declarations; `app/` is left out because routes only wire pages in and the e2e tests cover them. So logic goes into slice modules, never into `index*.ts` files or `app/`, where it would not be measured.
 - Modules: `package.json` sets `"type": "module"`, so every `.js` file is an ES module (`import`/`export`). A config that must use `require` (CommonJS) is named `.cjs`, for example a tool's config copied from older docs.
 - Environment variables: `.env.example` (no secrets) is committed, `.env.local` is ignored. Variables are read in one module, `src/shared/config/`, and validated with Zod at startup (`next.config.ts` runs the check). Server code imports `env` from `@/shared/config/index.server`; nothing else reads `process.env`. To add a variable, add a field to `src/shared/config/env/schema.ts` and a line with a comment to `.env.example`.
+- `.env.example` values must work as they are, both for local runs and on CI, which copies the file to `.env.local`; it never holds secrets. A secret CI needs one day (for example for deployment) goes into GitHub Secrets.
 - Standard annotation types are defined once, as named constants with their colors and meanings. An annotation stores its type, not its color, so custom types can be added later without rework.
 - Annotation, bookmark and reading-position locations are stored as EPUB CFI, not as pixel positions or page numbers, so they survive font and screen-size changes.
 - Uploads are validated on the server (real EPUB, no DRM, within limits). The browser also runs checks, only for convenience: it can say at once that a file is over 50 MB or is not an `.epub`, without waiting for the upload. These checks are not protection, so the server still validates everything itself. Book files are private and served only to their owner.
@@ -149,7 +151,7 @@ When a decision is made, move it to the section it belongs to.
 
 Before a task counts as done and a PR is opened:
 
-- `pnpm check` passes (lint, typecheck, Prettier, Steiger and Vitest).
+- `pnpm check` passes (lint, typecheck, Prettier, Steiger and Vitest with the coverage threshold). The `PR checks` workflow runs it, the release script tests and the e2e tests on every PR into `development` and `main`.
 - New logic has unit tests. Changes to sign-in, upload or reading also pass the Playwright e2e tests.
 - New screens are checked in both languages and both themes.
 - `CLAUDE.md` is updated in the same PR: the Commands section when a command is added or changed, the Status line when a stage is finished.
@@ -161,7 +163,7 @@ Before a task counts as done and a PR is opened:
 .claude/skills/      Workflow skills (see Git workflow)
 .claude/agents/      Agents that skills start with an empty context (do-code-review, run-checks)
 .claude/hooks/       Hooks for those agents, with their tests
-.github/workflows/   Release workflow
+.github/workflows/   PR checks (pr-checks.yml: the Definition of done checks on every PR) and release workflows
 .vscode/             Shared VS Code settings and recommended extensions
 app/                 Next.js routes, pages under app/[locale]/; each route only re-exports a page; globals.css holds the tokens
 proxy.ts             Locale redirects (Next.js middleware)
@@ -212,10 +214,10 @@ pnpm build
 
 To test on a phone or tablet on the same network: put the computer's local IP (`pnpm dev` prints it as `Network`) into `DEV_ALLOWED_ORIGINS` in `.env.local`, for example `DEV_ALLOWED_ORIGINS=192.168.1.20`, restart `pnpm dev`, and open `http://<ip>:3000/uk` on the device. Without it, Next.js blocks the dev assets for that address and parts of the page stay blank. The IP can change when the network does; never commit it.
 
-Check the code. `pnpm check` runs all the checks of the Definition of done except e2e (lint, format:check, lint:fsd, typecheck, test) and stops at the first failure; it is the single list of checks for people and the `run-checks` skill, which runs each of them separately; the pre-push hook (PL-21) and CI (PL-20) will use it too. Each command exits with a non-zero code on a problem; `lint` also fails on warnings:
+Check the code. `pnpm check` runs all the checks of the Definition of done except e2e (lint, format:check, lint:fsd, typecheck, test:coverage) and stops at the first failure; it is the single list of checks for people, the `run-checks` skill, which runs each of them separately, and the `PR checks` workflow on GitHub; the pre-push hook (PL-21) will use it too. Each command exits with a non-zero code on a problem; `lint` also fails on warnings:
 
 ```bash
-pnpm check         # all of the below plus the unit tests
+pnpm check         # all of the below plus the unit tests with the coverage threshold
 pnpm lint          # ESLint
 pnpm format:check  # Prettier, check only
 pnpm lint:fsd      # Steiger: FSD rules in src/
@@ -235,18 +237,19 @@ Run the unit tests (Vitest):
 ```bash
 pnpm test           # run once
 pnpm test:watch     # rerun on file changes
-pnpm test:coverage  # run once with a coverage report (table + coverage/index.html)
+pnpm test:coverage  # run once with a coverage report (table + coverage/index.html); fails below 80%
 pnpm test:ui        # Vitest UI in the browser, for local use
 pnpm test:changed   # run once, only tests related to uncommitted changes
 ```
 
 The Vitest UI asks for a token. The first time in a browser, copy the full `UI started at …?token=…` URL from the terminal into the address bar; the browser then keeps a login cookie, and later runs open the UI on their own.
 
-Run the end-to-end tests (Playwright) in Chromium, Firefox and WebKit. The browsers are not npm packages: install them once after cloning, or the first run fails. The tests start `pnpm dev` themselves, or reuse one already running at `http://localhost:3000`:
+Run the end-to-end tests (Playwright) in Chromium, Firefox and WebKit. The browsers are not npm packages: install them once after cloning, or the first run fails. The tests start `pnpm dev` themselves, or reuse one already running at `http://localhost:3000`. `pnpm test:e2e:ci` runs them the way CI does: it builds and starts the production server (`pnpm build` and `pnpm start`), retries failed tests, and fails when port 3000 is taken instead of testing what runs there, so stop `pnpm dev` first:
 
 ```bash
 pnpm exec playwright install chromium firefox webkit  # once, and after updating Playwright
 pnpm test:e2e         # run once
+pnpm test:e2e:ci      # run once against the production build, as on CI
 pnpm test:e2e:ui      # Playwright UI mode
 pnpm test:e2e:headed  # run with visible browser windows
 pnpm test:e2e:report  # open the HTML report of the last run
