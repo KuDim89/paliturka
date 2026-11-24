@@ -76,9 +76,9 @@ Write the report in English, in this order:
 Verdict: passed | changes needed
 
 Context received
-- Purpose: <the purpose> | not passed
-- Issue: <PL-N — title (N acceptance criteria)> | not passed, the change was not checked against criteria
-- Plan: passed; <no deviations | deviations: …> | not passed
+- Purpose: <the purpose> | not given
+- Issue: <PL-N — title (N acceptance criteria)> | not given, the change was not checked against criteria
+- Plan: given; <no deviations | deviations: …> | not given
 - Scope: all uncommitted changes (N files) | <the given paths>
 - Rules: CLAUDE.md, <rule files read>
 
@@ -100,7 +100,7 @@ Working tree: unchanged | changed: <what>
 ```
 
 - `critical`: must be fixed before the commit (bugs, security, broken project rules that would ship wrong behavior). `should fix`: quality, structure, naming, missing tests, unmet acceptance criteria. `suggestion`: optional improvement.
-- The verdict is `passed` when there is no `critical` finding, otherwise `changes needed`.
+- The verdict is `changes needed` when there is a `critical` or `should fix` finding, otherwise `passed` (only `suggestion` findings, or none).
 - Leave out empty levels. With no findings at all, write `Findings: none found.` With no skipped files, write `Skipped files: none.`
 - Without an issue, end the Findings section (after `none found` too) with one plain line, not a list item under a level: acceptance criteria were not checked, so no "criterion not met" finding does not mean all criteria are met.
 - Start the report with the `Verdict:` line: no introduction before it, no summary after it, and no sections that are not in the template (no "Notes").
