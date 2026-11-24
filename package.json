@@ -10,6 +10,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint:fsd": "steiger ./src",
+    "check": "pnpm lint && pnpm format:check && pnpm lint:fsd && pnpm typecheck && pnpm test",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
