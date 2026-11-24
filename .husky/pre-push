@@ -1,0 +1,2 @@
+# All checks of the Definition of done except e2e, the same list as CI (see `check` in package.json).
+pnpm check

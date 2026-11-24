@@ -4,7 +4,7 @@ A personal cloud hub for books. Users upload their books once, so the files no l
 
 **Goal:** a learning project plus personal use. No monetization is planned.
 
-**Status:** stage 1 (Skeleton) in progress. The base Next.js app is set up and shows a placeholder home page; the rest of the stack is not added yet. Web comes first (responsive); a mobile app is a future plan.
+**Status:** stage 1 (Skeleton) is done: the Next.js app with FSD, Prisma with SQLite, the storage module, i18n, themes and design tokens, linters, unit and e2e tests, PR checks and git hooks. It shows a placeholder home page. Next is stage 2 (Sign-in). Web comes first (responsive); a mobile app is a future plan.
 
 **Current stage:** local development only. The frontend and backend run on the developer's computer, with no servers or external accounts. Deployment comes later, when the user decides.
 
@@ -55,21 +55,21 @@ Formats we want to support in the future: PDF, FB2, MOBI/AZW3/AZW, DJVU, TXT, DO
 
 ## Stack
 
-Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger, Vitest, Playwright, Zod, Prisma, Tailwind CSS, shadcn/ui and next-intl are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint. The exception is `postcss.config.mjs`: Next.js does not read a TypeScript PostCSS config:
+Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger, Vitest, Playwright, Zod, Prisma, Tailwind CSS, shadcn/ui, next-intl, husky and lint-staged are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint. The exception is `postcss.config.mjs`: Next.js does not read a TypeScript PostCSS config:
 
-| Area         | Choice                                                                 |
-| ------------ | ---------------------------------------------------------------------- |
-| Framework    | Next.js with TypeScript                                                |
-| Database     | SQLite file, through Prisma                                            |
-| File storage | Local folder                                                           |
-| Auth         | Better Auth                                                            |
-| Email        | Printed to the console (verification and password reset links)         |
-| Validation   | Zod                                                                    |
-| i18n         | next-intl                                                              |
-| Styling      | Tailwind CSS and shadcn/ui                                             |
-| EPUB reader  | epub.js                                                                |
-| Tooling      | pnpm, ESLint, Prettier, Steiger, GitHub Actions (PR checks), cross-env |
-| Tests        | Vitest (unit), Playwright (e2e for sign-in, upload and reading)        |
+| Area         | Choice                                                                                                    |
+| ------------ | --------------------------------------------------------------------------------------------------------- |
+| Framework    | Next.js with TypeScript                                                                                   |
+| Database     | SQLite file, through Prisma                                                                               |
+| File storage | Local folder                                                                                              |
+| Auth         | Better Auth                                                                                               |
+| Email        | Printed to the console (verification and password reset links)                                            |
+| Validation   | Zod                                                                                                       |
+| i18n         | next-intl                                                                                                 |
+| Styling      | Tailwind CSS and shadcn/ui                                                                                |
+| EPUB reader  | epub.js                                                                                                   |
+| Tooling      | pnpm, ESLint, Prettier, Steiger, GitHub Actions (PR checks), cross-env, husky and lint-staged (git hooks) |
+| Tests        | Vitest (unit), Playwright (e2e for sign-in, upload and reading)                                           |
 
 Local data lives in a `storage/` folder:
 
@@ -164,6 +164,7 @@ Before a task counts as done and a PR is opened:
 .claude/agents/      Agents that skills start with an empty context (do-code-review, run-checks)
 .claude/hooks/       Hooks for those agents, with their tests
 .github/workflows/   PR checks (pr-checks.yml: the Definition of done checks on every PR) and release workflows
+.husky/              Git hooks (pre-commit, pre-push); lint-staged.config.ts sets what pre-commit runs
 .vscode/             Shared VS Code settings and recommended extensions
 app/                 Next.js routes, pages under app/[locale]/; each route only re-exports a page; globals.css holds the tokens
 proxy.ts             Locale redirects (Next.js middleware)
@@ -214,7 +215,7 @@ pnpm build
 
 To test on a phone or tablet on the same network: put the computer's local IP (`pnpm dev` prints it as `Network`) into `DEV_ALLOWED_ORIGINS` in `.env.local`, for example `DEV_ALLOWED_ORIGINS=192.168.1.20`, restart `pnpm dev`, and open `http://<ip>:3000/uk` on the device. Without it, Next.js blocks the dev assets for that address and parts of the page stay blank. The IP can change when the network does; never commit it.
 
-Check the code. `pnpm check` runs all the checks of the Definition of done except e2e (lint, format:check, lint:fsd, typecheck, test:coverage) and stops at the first failure; it is the single list of checks for people, the `run-checks` skill, which runs each of them separately, and the `PR checks` workflow on GitHub; the pre-push hook (PL-21) will use it too. Each command exits with a non-zero code on a problem; `lint` also fails on warnings:
+Check the code. `pnpm check` runs all the checks of the Definition of done except e2e (lint, format:check, lint:fsd, typecheck, test:coverage) and stops at the first failure; it is the single list of checks for people, the `run-checks` skill, which runs each of them separately, the `PR checks` workflow on GitHub and the pre-push hook. Each command exits with a non-zero code on a problem; `lint` also fails on warnings:
 
 ```bash
 pnpm check         # all of the below plus the unit tests with the coverage threshold
@@ -223,6 +224,13 @@ pnpm format:check  # Prettier, check only
 pnpm lint:fsd      # Steiger: FSD rules in src/
 pnpm typecheck     # TypeScript, no output files
 ```
+
+Git hooks (husky) run the checks before the code leaves the computer; `pnpm install` sets them up through the `prepare` script, and CI skips them (`HUSKY=0`):
+
+- `pre-commit`: lint-staged on the staged files (Prettier with `--write`, ESLint with `--fix` and the unit tests related to them, as set in `lint-staged.config.ts`), then `pnpm typecheck` for the whole project. Fixes are added to the commit.
+- `pre-push`: `pnpm check`. The e2e tests are not in the hooks: they need browsers and a server, and CI runs them.
+
+Never skip a hook with `--no-verify`; the skills never do. A failing hook stops the commit or push: fix the problem and run it again.
 
 Format all files with Prettier:
 
