@@ -1,0 +1,4 @@
+# The staged files: Prettier, ESLint with --fix and their related unit tests (lint-staged.config.ts).
+pnpm exec lint-staged
+# Types of the whole project: a change can break files that are not staged.
+pnpm typecheck

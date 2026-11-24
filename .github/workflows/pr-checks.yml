@@ -14,6 +14,10 @@ on:
 permissions:
   contents: read
 
+# `pnpm install` runs the `prepare` script, which would install the git hooks; CI never commits.
+env:
+  HUSKY: 0
+
 # A new push to the same PR cancels the run still in progress for the previous commit.
 concurrency:
   group: pr-checks-${{ github.event.pull_request.number }}
