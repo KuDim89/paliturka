@@ -2,9 +2,9 @@
 
 ## Checks
 
-- Run the checks the Definition of done in `CLAUDE.md` requires for this change, with the commands from its Commands section (fallback: `package.json` scripts). This skill names no checks itself: `CLAUDE.md` is the single source.
-- A required check has no tooling yet (e.g. the pre-code stage) → say which checks don't exist yet. Never report them as passed.
-- A failed check → step 9 (mechanical fix or regular fix).
+- Run the `run-checks` skill; do not run the checks yourself. Pass whether the e2e tests are required by the Definition of done in `CLAUDE.md` for this change, and why (from the plan's Tests section). The list of checks is the `check` script in `package.json`; this skill names no checks itself.
+- Show its report as that skill says. A check reported as `not run` is not passed: say why it did not run.
+- A failed check → step 9 (mechanical fix or regular fix). A mechanical fix is followed by a new `run-checks` run.
 
 ## Test coverage
 
