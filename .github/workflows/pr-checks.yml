@@ -1,0 +1,104 @@
+# Runs the Definition of done checks (CLAUDE.md) on every pull request into development and
+# main: `pnpm check` and the release script tests in one job, the e2e tests against the production
+# build in another. Making them required before merging is a branch protection setting on GitHub,
+# which picks the checks by job name: renaming a job means updating that setting.
+#
+# Actions are pinned to full commit SHAs, because a tag can be moved; the comment names the version.
+name: PR checks
+
+on:
+  pull_request:
+    branches: [development, main]
+
+# Unlisted scopes are set to none.
+permissions:
+  contents: read
+
+# A new push to the same PR cancels the run still in progress for the previous commit.
+concurrency:
+  group: pr-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # Reads the pnpm version from packageManager in package.json.
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Show Node.js and pnpm versions
+        run: |
+          node --version
+          pnpm --version
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # .env.local is not committed; the example holds every variable with values that work on CI.
+      - name: Create .env.local from .env.example
+        run: cp .env.example .env.local
+
+      - name: Generate the Prisma client
+        run: pnpm db:generate
+
+      - name: Lint, format, FSD, typecheck and unit tests with coverage
+        run: pnpm check
+
+      - name: Release script tests
+        run: python3 -m unittest discover -s scripts/release/tests
+
+  e2e:
+    name: E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # Reads the pnpm version from packageManager in package.json.
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Show Node.js and pnpm versions
+        run: |
+          node --version
+          pnpm --version
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # .env.local is not committed; the example holds every variable with values that work on CI.
+      - name: Create .env.local from .env.example
+        run: cp .env.example .env.local
+
+      # The e2e run builds the app, which typechecks it against the Prisma client.
+      - name: Generate the Prisma client
+        run: pnpm db:generate
+
+      # Firefox and WebKit need system libraries on Linux.
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
+
+      # CI is set on GitHub Actions, so Playwright builds and starts the production server.
+      - name: E2E tests
+        run: pnpm test:e2e
+
+      - name: Upload the Playwright report
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
