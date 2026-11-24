@@ -16,7 +16,8 @@ export default defineConfig({
           // Logic and server code: jsdom would replace Node globals such as streams and fetch.
           name: 'node',
           environment: 'node',
-          include: ['src/**/*.test.ts', 'app/**/*.test.ts'],
+          // .claude/ holds the hooks of the project's Claude Code agents.
+          include: ['src/**/*.test.ts', 'app/**/*.test.ts', '.claude/**/*.test.ts'],
         },
       },
       {
