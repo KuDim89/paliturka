@@ -159,6 +159,8 @@ Before a task counts as done and a PR is opened:
 ```text
 .claude/rules/       Rules that load for matching paths
 .claude/skills/      Workflow skills (see Git workflow)
+.claude/agents/      Agents that skills start with an empty context (do-code-review)
+.claude/hooks/       Hooks for those agents, with their tests
 .github/workflows/   Release workflow
 .vscode/             Shared VS Code settings and recommended extensions
 app/                 Next.js routes, pages under app/[locale]/; each route only re-exports a page; globals.css holds the tokens
@@ -183,15 +185,16 @@ pnpm-workspace.yaml  pnpm settings (engineStrict, allowed install scripts)
 
 Use the skills; they hold the full rules:
 
-| Task                                        | Skill          |
-| ------------------------------------------- | -------------- |
-| Create a GitHub issue                       | `create-issue` |
-| Work on an issue (plan, build, test)        | `do-issue`     |
-| Commit changes                              | `add-commit`   |
-| Rebase a branch onto `development`          | `sync-branch`  |
-| Open a PR into `development`                | `create-pr`    |
-| Commit, sync, push and open a PR in one run | `ship-pr`      |
-| Prepare a release (`development` → `main`)  | `release-pr`   |
+| Task                                        | Skill            |
+| ------------------------------------------- | ---------------- |
+| Create a GitHub issue                       | `create-issue`   |
+| Work on an issue (plan, build, test)        | `do-issue`       |
+| Review uncommitted changes before a commit  | `do-code-review` |
+| Commit changes                              | `add-commit`     |
+| Rebase a branch onto `development`          | `sync-branch`    |
+| Open a PR into `development`                | `create-pr`      |
+| Commit, sync, push and open a PR in one run | `ship-pr`        |
+| Prepare a release (`development` → `main`)  | `release-pr`     |
 
 ## Commands
 

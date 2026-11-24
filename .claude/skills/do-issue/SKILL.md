@@ -58,8 +58,9 @@ Every plan (the first one, deviation re-plans, fix plans) goes through the same 
    - **Regular fix**: list the problems, plan gate with a fix plan titled "Fix cycle k/3", fix (each bug gets a regression test where it can be automated), back to step 8.
    - After cycle 3 still failing → stop changing things. Summary: what each cycle tried, what still fails and why (guesses marked as guesses), options: narrow the scope, split the issue (new issue via create-issue), change the approach, or 3 more cycles. Nothing changes until the user chooses.
    - The counter lives only in the session; a resumed run starts at cycle 1 and says so.
-10. **Checkboxes** → read `references/checkboxes.md`.
-11. **Report** (see Report).
+10. **Review**: run the `do-code-review` skill on the changes, passing the issue key and title, its acceptance criteria, the agreed plan and the approved deviations (the review agent does not see this conversation). Show its report as the skill says. Findings the user wants fixed go through step 9 (a mechanical or a regular fix), then steps 8 and 10 run again. Do not commit. When a checks skill exists (PL-28), the order is: checks, review, then the checks again if the review led to changes.
+11. **Checkboxes** → read `references/checkboxes.md`.
+12. **Report** (see Report).
 
 ## Report
 
@@ -74,6 +75,7 @@ Then:
 - Issue URL, branch, plan-gate mode (plan mode or chat fallback).
 - Files changed; tests added or updated.
 - Checks run, with results.
+- Code review: the verdict and the findings from `do-code-review`, and which of them were fixed.
 - Each criterion: passed automatically / passed manually / failed / unverified.
 - Re-plans (deviations, fix cycles), small deviations, mechanical fixes.
 - Servers started and stopped.
