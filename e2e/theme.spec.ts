@@ -1,4 +1,4 @@
-import { expect, type Page, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 const LIGHT_BG = 'rgb(243, 238, 228)';
 const DARK_BG = 'rgb(21, 24, 22)';

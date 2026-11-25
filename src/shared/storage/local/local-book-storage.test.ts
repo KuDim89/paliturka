@@ -10,8 +10,8 @@ import {
   resolveStorageRoot,
   TEMP_FILE_PATTERN,
   tempFileName,
+  type LocalBookStorage,
 } from './local-book-storage';
-import type { LocalBookStorage } from './local-book-storage';
 
 let root: string;
 let storage: LocalBookStorage;

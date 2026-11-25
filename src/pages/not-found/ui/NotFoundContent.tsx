@@ -1,6 +1,6 @@
 import { createTranslator } from 'next-intl';
 
-import { type Locale, messagesByLocale } from '@/shared/i18n';
+import { messagesByLocale, type Locale } from '@/shared/i18n';
 
 import { NotFoundView } from './NotFoundView';
 
