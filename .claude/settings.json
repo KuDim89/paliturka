@@ -1,0 +1,36 @@
+{
+  "attribution": { "commit": "", "pr": "" },
+  "permissions": {
+    "ask": ["Bash(git commit:*)"],
+    "deny": [
+      "Bash(git add -A:*)",
+      "Bash(git add --all:*)",
+      "Bash(git add .)",
+      "Bash(git add -- .)",
+      "Bash(git add * .)",
+      "Bash(git add ./)",
+      "Bash(git add -- ./)",
+      "Bash(git add * ./)",
+      "Bash(git add :/*)",
+      "Bash(git add * :/*)",
+      "Bash(git add -u:*)",
+      "Bash(git add --update:*)",
+      "Bash(git add * -A*)",
+      "Bash(git add * --all*)",
+      "Bash(git add * -u*)",
+      "Bash(git add * --update*)",
+      "Bash(git commit --no-verify:*)",
+      "Bash(git commit -n:*)",
+      "Bash(git commit --amend:*)",
+      "Bash(git commit * --no-verify*)",
+      "Bash(git commit * -n *)",
+      "Bash(git commit * -n)",
+      "Bash(git commit * --amend*)",
+      "Bash(git commit -a:*)",
+      "Bash(git commit --all:*)",
+      "Bash(git commit * -a *)",
+      "Bash(git commit * -a)",
+      "Bash(git commit * --all*)"
+    ]
+  }
+}

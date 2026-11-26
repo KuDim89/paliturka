@@ -1,3 +1,5 @@
+# Staged local environment and key files, and added lines that look like secrets.
+node scripts/git-hooks/check-staged-files.mjs
 # The staged files: Prettier, ESLint with --fix and their related unit tests (lint-staged.config.ts).
 pnpm exec lint-staged
 # Types of the whole project: a change can break files that are not staged.
