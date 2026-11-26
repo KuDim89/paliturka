@@ -57,19 +57,19 @@ Formats we want to support in the future: PDF, FB2, MOBI/AZW3/AZW, DJVU, TXT, DO
 
 Chosen. Next.js, TypeScript, pnpm, ESLint, Prettier, Steiger, Vitest, Playwright, Zod, Prisma, Tailwind CSS, shadcn/ui, next-intl, husky and lint-staged are installed; the rest is not installed or tested yet. Config files are TypeScript (`*.config.ts`); ESLint loads its `eslint.config.ts` through `jiti`, a dev dependency, so keep `jiti` when updating ESLint. The exception is `postcss.config.mjs`: Next.js does not read a TypeScript PostCSS config:
 
-| Area         | Choice                                                                                                    |
-| ------------ | --------------------------------------------------------------------------------------------------------- |
-| Framework    | Next.js with TypeScript                                                                                   |
-| Database     | SQLite file, through Prisma                                                                               |
-| File storage | Local folder                                                                                              |
-| Auth         | Better Auth                                                                                               |
-| Email        | Printed to the console (verification and password reset links)                                            |
-| Validation   | Zod                                                                                                       |
-| i18n         | next-intl                                                                                                 |
-| Styling      | Tailwind CSS and shadcn/ui                                                                                |
-| EPUB reader  | epub.js                                                                                                   |
-| Tooling      | pnpm, ESLint, Prettier, Steiger, GitHub Actions (PR checks), cross-env, husky and lint-staged (git hooks) |
-| Tests        | Vitest (unit), Playwright (e2e for sign-in, upload and reading)                                           |
+| Area         | Choice                                                                                                                                               |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework    | Next.js with TypeScript                                                                                                                              |
+| Database     | SQLite file, through Prisma                                                                                                                          |
+| File storage | Local folder                                                                                                                                         |
+| Auth         | Better Auth                                                                                                                                          |
+| Email        | Printed to the console (verification and password reset links)                                                                                       |
+| Validation   | Zod                                                                                                                                                  |
+| i18n         | next-intl                                                                                                                                            |
+| Styling      | Tailwind CSS and shadcn/ui                                                                                                                           |
+| EPUB reader  | epub.js                                                                                                                                              |
+| Tooling      | pnpm, ESLint, Prettier with `@ianvs/prettier-plugin-sort-imports`, Steiger, GitHub Actions (PR checks), cross-env, husky and lint-staged (git hooks) |
+| Tests        | Vitest (unit), Playwright (e2e for sign-in, upload and reading)                                                                                      |
 
 Local data lives in a `storage/` folder:
 
@@ -140,6 +140,7 @@ When a decision is made, move it to the section it belongs to.
 - Accessibility target is WCAG 2.2 AA: 4.5:1 text contrast, everything usable from the keyboard, visible focus, semantic elements, focus kept inside open dialogs.
 - Unit tests sit next to the code they test, inside the slice. The file name sets the environment: component tests are `*.test.tsx` and run in jsdom; logic and server tests are `*.test.ts` and run in Node, where globals such as streams and `fetch` are real. A `*.test.ts` file that needs the DOM starts with `// @vitest-environment jsdom`.
 - Coverage: `pnpm test:coverage` fails below 80% of statements, branches, functions or lines. It counts only `src/`, without public API and entry-point files (`index*.ts`) and type declarations; `app/` is left out because routes only wire pages in and the e2e tests cover them. So logic goes into slice modules, never into `index*.ts` files or `app/`, where it would not be measured.
+- Imports are sorted by Prettier (`@ianvs/prettier-plugin-sort-imports`, set in `.prettierrc.json`), so never order them by hand: Node.js built-ins (`node:*`) and packages first, then `@/` aliases, then relative paths, with a blank line between the groups and alphabetical order inside a group. Side-effect imports such as `import './globals.css'` stay where they are. Prettier sorts on save, in the pre-commit hook and `pnpm format`; `pnpm format:check` fails on unsorted imports.
 - Modules: `package.json` sets `"type": "module"`, so every `.js` file is an ES module (`import`/`export`). A config that must use `require` (CommonJS) is named `.cjs`, for example a tool's config copied from older docs.
 - Environment variables: `.env.example` (no secrets) is committed, `.env.local` is ignored. Variables are read in one module, `src/shared/config/`, and validated with Zod at startup (`next.config.ts` runs the check). Server code imports `env` from `@/shared/config/index.server`; nothing else reads `process.env`. To add a variable, add a field to `src/shared/config/env/schema.ts` and a line with a comment to `.env.example`.
 - `.env.example` values must work as they are, both for local runs and on CI, which copies the file to `.env.local`; it never holds secrets. A secret CI needs one day (for example for deployment) goes into GitHub Secrets.

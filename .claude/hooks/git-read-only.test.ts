@@ -1,6 +1,5 @@
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-
 import { describe, expect, test } from 'vitest';
 
 const hookPath = fileURLToPath(new URL('./git-read-only.mjs', import.meta.url));
