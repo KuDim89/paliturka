@@ -2,9 +2,11 @@
 
 ## Checks
 
-- Run the `run-checks` skill; do not run the checks yourself. Pass whether the e2e tests are required by the Definition of done in `CLAUDE.md` for this change, and why (from the plan's Tests section). The list of checks is the `check` script in `package.json`; this skill names no checks itself.
-- Show its report as that skill says. A check reported as `not run` is not passed: say why it did not run.
-- A failed check → step 9 (mechanical fix or regular fix). A mechanical fix is followed by a new `run-checks` run.
+- Run `pnpm check` with the Bash tool. It is the list of checks of the Definition of done (the `check` script in `package.json`, the same as the pre-push hook and CI) and stops at the first failure; this skill names no checks itself.
+- When the Definition of done in `CLAUDE.md` requires the e2e tests for this change (the plan's Tests section says so), also run `pnpm test:e2e`: in the background, with the server stopped afterwards, as `dev-server.md` says.
+- Change and fix nothing while checking: no `--fix`, `--write` or `-u`, no edits.
+- Report each script of `check` as `passed`, `failed` or `not run` (the ones after the first failure), the e2e tests the same way, and the output of a failed check only, not the whole log. `not run` is not passed: say why.
+- A failed check → step 9 (mechanical fix or regular fix). Any fix is followed by a new `pnpm check` run.
 
 ## Test coverage
 

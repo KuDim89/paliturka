@@ -162,7 +162,7 @@ Before a task counts as done and a PR is opened:
 ```text
 .claude/rules/       Rules that load for matching paths
 .claude/skills/      Workflow skills (see Git workflow)
-.claude/agents/      Agents that skills start with an empty context (do-code-review, run-checks)
+.claude/agents/      Agents that skills start with an empty context (do-code-review)
 .claude/hooks/       Hooks for those agents and the git-write guard of the main session, with their tests
 .claude/settings.json Claude Code settings: no own attribution, ask before git commit, deny unsafe git add and commit options
 .github/workflows/   PR checks (pr-checks.yml: the Definition of done checks on every PR) and release workflows
@@ -203,16 +203,15 @@ The `commit-msg` hook checks the message and the `pre-commit` hook checks the st
 
 Use the skills; they hold the full rules:
 
-| Task                                         | Skill            |
-| -------------------------------------------- | ---------------- |
-| Create a GitHub issue                        | `create-issue`   |
-| Work on an issue (plan, build, test)         | `do-issue`       |
-| Run the checks (`pnpm check`, e2e if needed) | `run-checks`     |
-| Review uncommitted changes before a commit   | `do-code-review` |
-| Rebase a branch onto `development`           | `sync-branch`    |
-| Open a PR into `development`                 | `create-pr`      |
-| Commit, sync, push and open a PR in one run  | `ship-pr`        |
-| Prepare a release (`development` → `main`)   | `release-pr`     |
+| Task                                        | Skill            |
+| ------------------------------------------- | ---------------- |
+| Create a GitHub issue                       | `create-issue`   |
+| Work on an issue (plan, build, test)        | `do-issue`       |
+| Review uncommitted changes before a commit  | `do-code-review` |
+| Rebase a branch onto `development`          | `sync-branch`    |
+| Open a PR into `development`                | `create-pr`      |
+| Commit, sync, push and open a PR in one run | `ship-pr`        |
+| Prepare a release (`development` → `main`)  | `release-pr`     |
 
 ## Commands
 
@@ -229,7 +228,7 @@ pnpm build
 
 To test on a phone or tablet on the same network: put the computer's local IP (`pnpm dev` prints it as `Network`) into `DEV_ALLOWED_ORIGINS` in `.env.local`, for example `DEV_ALLOWED_ORIGINS=192.168.1.20`, restart `pnpm dev`, and open `http://<ip>:3000/uk` on the device. Without it, Next.js blocks the dev assets for that address and parts of the page stay blank. The IP can change when the network does; never commit it.
 
-Check the code. `pnpm check` runs all the checks of the Definition of done except e2e (lint, format:check, lint:fsd, typecheck, test:coverage) and stops at the first failure; it is the single list of checks for people, the `run-checks` skill, which runs each of them separately, the `PR checks` workflow on GitHub and the pre-push hook. Each command exits with a non-zero code on a problem; `lint` also fails on warnings:
+Check the code. `pnpm check` runs all the checks of the Definition of done except e2e (lint, format:check, lint:fsd, typecheck, test:coverage) and stops at the first failure; it is the single list of checks for people, the Verify step of `do-issue`, the `PR checks` workflow on GitHub and the pre-push hook. Each command exits with a non-zero code on a problem; `lint` also fails on warnings:
 
 ```bash
 pnpm check         # all of the below plus the unit tests with the coverage threshold
