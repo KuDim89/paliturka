@@ -1,7 +1,7 @@
 ---
 name: create-pr
 description: 'Creates one GitHub pull request from the current branch into development, with a Conventional Commits title, a What/Why/Changes description and the linked issue''s labels. Squashes the branch into one commit when it has several, and switches back to development afterwards. Use when the user says "create PR", "open pull request", "створи PR", "відкрий PR", "зроби пул реквест", or runs /create-pr. Not for release PRs (development → main).'
-allowed-tools: Read, Grep, Glob, Bash(git branch --show-current), Bash(git status*), Bash(git fetch origin*), Bash(git rev-parse *), Bash(git config branch.*), Bash(git rev-list *), Bash(git log *), Bash(git diff *), Bash(git merge-base *), Bash(git reset --soft *), Bash(git commit -F *), Bash(git push --force-with-lease*), Bash(git switch development), Bash(git pull --ff-only*), Bash(gh auth status*), Bash(gh repo view *), Bash(gh issue view *), Bash(gh pr list *), Bash(gh pr view *), Bash(gh pr create *), Bash(gh pr edit *)
+allowed-tools: Read, Grep, Glob, Bash(git branch --show-current), Bash(git status*), Bash(git fetch origin*), Bash(git rev-parse *), Bash(git config branch.*), Bash(git rev-list *), Bash(git log *), Bash(git diff *), Bash(git merge-base *), Bash(git reset --soft *), Bash(git push --force-with-lease*), Bash(git switch development), Bash(git pull --ff-only*), Bash(gh auth status*), Bash(gh repo view *), Bash(gh issue view *), Bash(gh pr list *), Bash(gh pr view *), Bash(gh pr create *), Bash(gh pr edit *)
 ---
 
 # Create PR
@@ -135,7 +135,7 @@ Only with an issue. Copy only the issue's **type** labels (`bug`, `feature`, `en
 
 Only when C > 1. The PR description is still built from all original commits (Workflow step 3, before the squash).
 
-Message: the rules of the Message section in `.claude/skills/add-commit/SKILL.md`, with:
+Message: the rules of the Commits section in `CLAUDE.md`, with:
 
 - Subject = the PR title without `[PL-N] ` (`feat(backend): add OAuth login for the API`); `!` if any commit is breaking, plus a body paragraph on what breaks and how to migrate.
 - Body: what and why across all commits, not a list of commit subjects; every line at most 72 characters.

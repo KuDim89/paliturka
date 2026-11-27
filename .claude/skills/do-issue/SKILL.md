@@ -1,6 +1,6 @@
 ---
 name: do-issue
-description: 'Works on one GitHub issue end to end: reads it, agrees a step-by-step plan, creates or switches to the issue branch, implements with tests, verifies against the acceptance criteria and loops plan → fix → retest (max 3 cycles); then ticks the verified checkboxes and reports. Use when the user says "do issue", "do-issue PL-N", "work on issue", "візьми ішью", "виконай ішью", "зроби ішью", or runs /do-issue. Not for creating issues (create-issue) or commits and PRs (add-commit, ship-pr).'
+description: 'Works on one GitHub issue end to end: reads it, agrees a step-by-step plan, creates or switches to the issue branch, implements with tests, verifies against the acceptance criteria and loops plan → fix → retest (max 3 cycles); then ticks the verified checkboxes and reports. Use when the user says "do issue", "do-issue PL-N", "work on issue", "візьми ішью", "виконай ішью", "зроби ішью", or runs /do-issue. Not for creating issues (create-issue) or commits and PRs (ship-pr).'
 ---
 
 # Do issue
@@ -38,7 +38,7 @@ Every plan (the first one, deviation re-plans, fix plans) goes through the same 
    - `gh auth status`; `gh issue view N --json number,title,state,body,labels,url`. Not found, or `url` has no `/issues/` (the number is a PR; issues and PRs share numbers) → stop. Closed → ask whether to continue.
    - Issue branch from the Branch field of the body. Missing → derive it with the create-issue rules (prefix from the type label, slug) and confirm with the user.
    - `git status`: a merge, rebase, cherry-pick or revert in progress → stop.
-   - `git status --porcelain --untracked-files=no` not empty and the current branch is not the issue branch → list the files and stop: "commit them first (`/add-commit`) or stash them yourself, then run do-issue again". On the issue branch they are work in progress (step 3). Untracked files → a note only.
+   - `git status --porcelain --untracked-files=no` not empty and the current branch is not the issue branch → list the files and stop: "commit them first or stash them yourself, then run do-issue again". On the issue branch they are work in progress (step 3). Untracked files → a note only.
 3. **Resume and branch state** → read `references/branch-and-resume.md`. Result: fresh start, or Continue / Plan anew / Stop; stale-branch warnings.
 4. **Understand**: the issue (Description, Tasks, Acceptance criteria, Technical notes), `CLAUDE.md`, the relevant rules and code; on Continue, the existing diff too. Open the plan gate. Ask until scope, approach and every criterion are clear on both sides. Nothing unclear → say "the issue is clear, no questions".
 5. **Plan**, short and step by step:

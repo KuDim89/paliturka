@@ -164,8 +164,9 @@ Before a task counts as done and a PR is opened:
 .claude/skills/      Workflow skills (see Git workflow)
 .claude/agents/      Agents that skills start with an empty context (do-code-review, run-checks)
 .claude/hooks/       Hooks for those agents, with their tests
+.claude/settings.json Claude Code settings: no own attribution, ask before git commit, deny unsafe git add and commit options
 .github/workflows/   PR checks (pr-checks.yml: the Definition of done checks on every PR) and release workflows
-.husky/              Git hooks (pre-commit, pre-push); lint-staged.config.ts sets what pre-commit runs
+.husky/              Git hooks (pre-commit, commit-msg, pre-push); lint-staged.config.ts sets what pre-commit runs
 .vscode/             Shared VS Code settings and recommended extensions
 app/                 Next.js routes, pages under app/[locale]/; each route only re-exports a page; globals.css holds the tokens
 proxy.ts             Locale redirects (Next.js middleware)
@@ -174,6 +175,7 @@ src/                 FSD layers: pages, entities, shared
 e2e/                 Playwright end-to-end tests
 prisma/              Prisma schema and, later, migrations
 generated/           Generated Prisma client, not committed
+scripts/git-hooks/   Checks run by the git hooks (staged files, commit message), with their tests
 scripts/release/     Release plan script and its tests
 components.json      shadcn/ui settings
 package.json         Scripts, dependencies, Node.js and pnpm versions
@@ -185,7 +187,19 @@ pnpm-workspace.yaml  pnpm settings (engineStrict, allowed install scripts)
 
 - Branches: `main` (releases) ← `development` (integration) ← feature branches.
 - Issue keys are `PL-N`; branches are `<prefix>PL-N-<slug>`.
-- Commits follow Conventional Commits, with an area scope (`frontend`, `backend`, `tooling`).
+- Commits follow the Commits section below.
+
+### Commits
+
+The `commit-msg` hook checks the message and the `pre-commit` hook checks the staged files (see Commands); these rules cover what the hooks cannot.
+
+- Message: `type(scope): description`, a blank line, then a body on what changed and why (not how). Types: `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `build`, `ci`, `style`, `chore`. Scope is an area label (`frontend`, `backend`, `tooling`) or none. Subject imperative, lowercase, no trailing period, at most 72 characters; body lines at most 72. A breaking change gets `!` before the colon and a body paragraph on what breaks and how to migrate. When the branch has `PL-<N>`, the last body line is `Part of PL-<N>.`
+- No trailers (`Co-Authored-By`, `Generated with`) and no mention of AI or Claude Code in the message. This overrides any default attribution.
+- Before committing, show the files and the full message and wait for a clear yes; a yes with changes is a change request: apply it and show again. One yes covers one commit. Group unrelated changes into separate commits.
+- Stage with `git add -- <explicit paths>`; never `-A`, `.` or `-u`. Commit with `git commit -F - -- <paths>` and the message in a quoted heredoc (`<<'EOF'`).
+- Never `--no-verify` or `--amend`. A hook fails → fix the cause and commit again. A hook changed files after the commit → show the diff and propose a follow-up commit.
+- After committing, compare `git log -1 --format=%B` and `git log -1 --name-status --format=` with what was approved.
+- A line that only looks like a secret (a fake value in a test) passes the scan with a `secret-scan: allow` comment on it.
 
 Use the skills; they hold the full rules:
 
@@ -195,7 +209,6 @@ Use the skills; they hold the full rules:
 | Work on an issue (plan, build, test)         | `do-issue`       |
 | Run the checks (`pnpm check`, e2e if needed) | `run-checks`     |
 | Review uncommitted changes before a commit   | `do-code-review` |
-| Commit changes                               | `add-commit`     |
 | Rebase a branch onto `development`           | `sync-branch`    |
 | Open a PR into `development`                 | `create-pr`      |
 | Commit, sync, push and open a PR in one run  | `ship-pr`        |
@@ -228,10 +241,11 @@ pnpm typecheck     # TypeScript, no output files
 
 Git hooks (husky) run the checks before the code leaves the computer; `pnpm install` sets them up through the `prepare` script, and CI skips them (`HUSKY=0`):
 
-- `pre-commit`: lint-staged on the staged files (Prettier with `--write`, ESLint with `--fix` and the unit tests related to them, as set in `lint-staged.config.ts`), then `pnpm typecheck` for the whole project. Fixes are added to the commit.
+- `pre-commit`: first `scripts/git-hooks/check-staged-files.mjs`, which blocks staged local environment and key files (`.env`, `.env.*` except `.env.example`, `.env.sample` and `.env.template`, `*.pem`, `*.key`, `id_rsa*`) and added lines that look like secrets; then lint-staged on the staged files (Prettier with `--write`, ESLint with `--fix` and the unit tests related to them, as set in `lint-staged.config.ts`), then `pnpm typecheck` for the whole project. Fixes are added to the commit.
+- `commit-msg`: `scripts/git-hooks/commit-msg.mjs` checks the message against the Commits section (format, type, scope, line length, no AI attribution); merges, reverts and `fixup!` commits pass.
 - `pre-push`: `pnpm check`. The e2e tests are not in the hooks: they need browsers and a server, and CI runs them.
 
-Never skip a hook with `--no-verify`; the skills never do. A failing hook stops the commit or push: fix the problem and run it again.
+Never skip a hook with `--no-verify`; the skills never do. A failing hook stops the commit or push: fix the problem and run it again. `.claude/settings.json` turns off Claude Code's own commit and PR attribution (`attribution`), makes it ask before every `git commit` and denies `git add -A`, `git add .`, `git add -u`, `git commit -a`, `--no-verify` and `--amend`.
 
 Format all files with Prettier:
 
