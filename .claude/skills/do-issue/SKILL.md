@@ -52,13 +52,13 @@ Every plan (the first one, deviation re-plans, fix plans) goes through the same 
 
 6. **Branch** → read `references/branch-and-resume.md`, section "Switching".
 7. **Implement** step by step, writing the planned tests together with the code they cover. Track progress with tasks. Any doubt about deviating from the plan → read `references/deviations.md`.
-8. **Verify** → read `references/verification.md` (the checks run through the `run-checks` skill); read `references/dev-server.md` before running the app.
+8. **Verify** → read `references/verification.md` (run `pnpm check` yourself, and `pnpm test:e2e` when the Definition of done needs it); read `references/dev-server.md` before running the app.
 9. **Fix loop**:
    - **Mechanical fixes**, no plan and no cycle: linter autofix (`--fix`), Prettier formatting, a missing or unused import, an obvious typo. Only when they change no behavior, tests or test expectations, and only in files changed for this issue (never format the whole repo). One try, then rerun the failed check. Still failing, touching behavior, or any doubt → a regular fix.
    - **Regular fix**: list the problems, plan gate with a fix plan titled "Fix cycle k/3", fix (each bug gets a regression test where it can be automated), back to step 8.
    - After cycle 3 still failing → stop changing things. Summary: what each cycle tried, what still fails and why (guesses marked as guesses), options: narrow the scope, split the issue (new issue via create-issue), change the approach, or 3 more cycles. Nothing changes until the user chooses.
    - The counter lives only in the session; a resumed run starts at cycle 1 and says so.
-10. **Review**: run the `do-code-review` skill on the changes, passing the issue key and title, its acceptance criteria, the agreed plan and the approved deviations (the review agent does not see this conversation). Show its report as the skill says. Findings the user wants fixed go through step 9 (a mechanical or a regular fix), then steps 8 and 10 run again. Do not commit. The order is always: `run-checks` (step 8), `do-code-review`, then `run-checks` again if the review led to changes, so the reported code is the checked code.
+10. **Review**: run the `do-code-review` skill on the changes, passing the issue key and title, its acceptance criteria, the agreed plan and the approved deviations (the review agent does not see this conversation). Show its report as the skill says. Findings the user wants fixed go through step 9 (a mechanical or a regular fix), then steps 8 and 10 run again. Do not commit. The order is always: the checks (step 8), `do-code-review`, then the checks again if the review led to changes, so the reported code is the checked code.
 11. **Checkboxes** → read `references/checkboxes.md`.
 12. **Report** (see Report).
 
@@ -74,7 +74,7 @@ Then:
 
 - Issue URL, branch, plan-gate mode (plan mode or chat fallback).
 - Files changed; tests added or updated.
-- Checks: the verdict and results from the last `run-checks` report.
+- Checks: each script of the last `pnpm check` run (passed / failed / not run) and `pnpm test:e2e` when it ran.
 - Code review: the verdict and the findings from `do-code-review`, and which of them were fixed.
 - Each criterion: passed automatically / passed manually / failed / unverified.
 - Re-plans (deviations, fix cycles), small deviations, mechanical fixes.
