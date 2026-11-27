@@ -163,7 +163,7 @@ Before a task counts as done and a PR is opened:
 .claude/rules/       Rules that load for matching paths
 .claude/skills/      Workflow skills (see Git workflow)
 .claude/agents/      Agents that skills start with an empty context (do-code-review, run-checks)
-.claude/hooks/       Hooks for those agents, with their tests
+.claude/hooks/       Hooks for those agents and the git-write guard of the main session, with their tests
 .claude/settings.json Claude Code settings: no own attribution, ask before git commit, deny unsafe git add and commit options
 .github/workflows/   PR checks (pr-checks.yml: the Definition of done checks on every PR) and release workflows
 .husky/              Git hooks (pre-commit, commit-msg, pre-push); lint-staged.config.ts sets what pre-commit runs
@@ -196,7 +196,7 @@ The `commit-msg` hook checks the message and the `pre-commit` hook checks the st
 - Message: `type(scope): description`, a blank line, then a body on what changed and why (not how). Types: `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `build`, `ci`, `style`, `chore`. Scope is an area label (`frontend`, `backend`, `tooling`) or none. Subject imperative, lowercase, no trailing period, at most 72 characters; body lines at most 72. A breaking change gets `!` before the colon and a body paragraph on what breaks and how to migrate. When the branch has `PL-<N>`, the last body line is `Part of PL-<N>.`
 - No trailers (`Co-Authored-By`, `Generated with`) and no mention of AI or Claude Code in the message. This overrides any default attribution.
 - Before committing, show the files and the full message and wait for a clear yes; a yes with changes is a change request: apply it and show again. One yes covers one commit. Group unrelated changes into separate commits.
-- Stage with `git add -- <explicit paths>`; never `-A`, `.` or `-u`. Commit with `git commit -F - -- <paths>` and the message in a quoted heredoc (`<<'EOF'`).
+- Stage with `git add -- <explicit paths>`; never `-A`, `.` or `-u`. A file whose deletion is already staged is not passed to `git add` (git no longer finds it), only to `git commit`. Commit with `git commit -F - -- <paths>` and the message in a quoted heredoc (`<<'EOF'`).
 - Never `--no-verify` or `--amend`. A hook fails → fix the cause and commit again. A hook changed files after the commit → show the diff and propose a follow-up commit.
 - After committing, compare `git log -1 --format=%B` and `git log -1 --name-status --format=` with what was approved.
 - A line that only looks like a secret (a fake value in a test) passes the scan with a `secret-scan: allow` comment on it.
@@ -245,7 +245,7 @@ Git hooks (husky) run the checks before the code leaves the computer; `pnpm inst
 - `commit-msg`: `scripts/git-hooks/commit-msg.mjs` checks the message against the Commits section (format, type, scope, line length, no AI attribution); merges, reverts and `fixup!` commits pass.
 - `pre-push`: `pnpm check`. The e2e tests are not in the hooks: they need browsers and a server, and CI runs them.
 
-Never skip a hook with `--no-verify`; the skills never do. A failing hook stops the commit or push: fix the problem and run it again. `.claude/settings.json` turns off Claude Code's own commit and PR attribution (`attribution`), makes it ask before every `git commit` and denies `git add -A`, `git add .`, `git add -u`, `git commit -a`, `--no-verify` and `--amend`.
+Never skip a hook with `--no-verify`; the skills never do. A failing hook stops the commit or push: fix the problem and run it again. `.claude/settings.json` turns off Claude Code's own commit and PR attribution (`attribution`), makes it ask before every `git commit` (in Bash and PowerShell) and denies `git add -A`, `git add .`, `git add -u`, `git commit -a`, `--no-verify` and `--amend`. Those rules match command text, so a PreToolUse hook, `.claude/hooks/git-write-guard.mjs`, also parses every Bash and PowerShell command and blocks the same options however they are spelled: combined short flags (`-anm`), abbreviated long options (`--no-verif`) and commands chained after `&&` or `;`.
 
 Format all files with Prettier:
 
